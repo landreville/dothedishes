@@ -23,9 +23,10 @@ public class DoTheDishes extends ApplicationAdapter {
 	private static final int RES_HEIGHT = 480;
 	private static final int SINK_BOTTOM_Y = 116;
 	private static final int SINK_BOTTOM_LEFT_X = 421;
-	private static final int SINK_BOTTOM_RIGHT_X = 735;
+	private static final int SINK_BOTTOM_RIGHT_X = 737;
 	private static final int SINK_TOP_RIGHT_X = 710;
-	private static final int SINK_TOP_LEFT_X = 456;
+	private static final int SINK_TOP_LEFT_X = 454;
+	private static final int SINK_TOP_Y = 205;
 
 	private Random rand;
 	private OrthographicCamera camera;
@@ -166,14 +167,47 @@ public class DoTheDishes extends ApplicationAdapter {
 	}
 
 	private void locateInitialDishes(){
-		int i = rand.nextInt(this.allDishTextures.size);
-		Texture texture = this.allDishTextures.get(i);
-		Dish dish = new Dish(
-				texture,
-				SINK_BOTTOM_LEFT_X,
-				SINK_BOTTOM_Y - texture.getHeight() / 2
-		);
-		dishes.add(dish);
+		float textureWidth = 0;
+		float textureHeight = 0;
+		float x = 0;
+		float y = 0;
+		float m = SINK_TOP_Y / (SINK_TOP_LEFT_X - SINK_BOTTOM_LEFT_X);
+		int min = 0;
+		int max = 0;
+		int dishCount = 9;
+
+		float deltaY = 0;
+
+		for(int i=0; i<dishCount; i++) {
+			Texture texture = this.allDishTextures.get(
+				rand.nextInt(this.allDishTextures.size)
+			);
+
+			textureWidth = texture.getWidth();
+			textureHeight = texture.getHeight();
+
+			y = SINK_TOP_Y - textureHeight - deltaY;
+			deltaY += rand.nextInt((SINK_TOP_Y - SINK_BOTTOM_Y) / dishCount);
+            if(y < SINK_BOTTOM_Y - textureHeight/2){
+                y = SINK_BOTTOM_Y - textureHeight/2;
+            }
+
+			max = (int)(SINK_BOTTOM_RIGHT_X - y/m - textureWidth);
+			min = (int)(SINK_BOTTOM_LEFT_X + y/m);
+			if(min < SINK_BOTTOM_LEFT_X){
+			    min = SINK_BOTTOM_LEFT_X;
+            }
+            if(max > SINK_BOTTOM_RIGHT_X){
+			    max = SINK_BOTTOM_RIGHT_X;
+            }
+
+			x = rand.nextInt((max - min) + 1) + min;
+
+
+
+			Dish dish = new Dish(texture, x, y);
+			dishes.add(dish);
+		}
 	}
 
 	private void locateRackWires() {
