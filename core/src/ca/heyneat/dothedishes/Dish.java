@@ -2,6 +2,8 @@ package ca.heyneat.dothedishes;
 
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
@@ -10,93 +12,73 @@ import java.util.Iterator;
 import javax.xml.soap.Text;
 
 public class Dish {
-    private Texture texture;
-    private Rectangle rectangle;
-    private Array<Dirt> dirts;
+    private Sprite dishSprite;
+    private Array<Sprite> dirtSprites;
 
-    public Dish(Texture texture, float x, float y){
-        this.texture = texture;
-        this.rectangle = new Rectangle();
-        this.rectangle.setX(x);
-        this.rectangle.setY(y);
-        this.rectangle.setHeight(texture.getHeight());
-        this.rectangle.setWidth(texture.getWidth());
-        this.dirts = new Array<Dirt>();
+    public Dish(Sprite dishSprite){
+        this.dishSprite = dishSprite;
+        this.dirtSprites = new Array<Sprite>();
     }
 
-    public Texture getTexture(){
-        return this.texture;
+    public void draw(SpriteBatch batch){
+        this.dishSprite.draw(batch);
     }
 
-    public float getX() {
-        return this.rectangle.getX();
-    }
-
-    public float getY() {
-        return this.rectangle.getY();
-    }
-
-    public float getHeight(){
-        return this.rectangle.getHeight();
-    }
-
-    public float getWidth(){
-        return this.rectangle.getWidth();
+    public Sprite getSprite(){
+        return this.dishSprite;
     }
 
     public void setX(float x){
         float diff = x - this.getX();
-        this.rectangle.setX(x);
+        this.dishSprite.setX(x);
         this.moveDirtXY(diff, 0);
     }
 
     public void setY(float y){
         float diff = y - this.getY();
-        this.rectangle.setY(y);
+        this.dishSprite.setY(y);
         this.moveDirtXY(0, diff);
     }
 
-    public void moveX(float x){
-        this.rectangle.setX(this.rectangle.getX() + x);
-        this.moveDirtXY(x, 0);
+    public float getX(){
+        return this.dishSprite.getX();
     }
 
-    public void moveY(float y){
-        this.rectangle.setY(this.rectangle.getY() + y);
-        this.moveDirtXY(0, y);
+    public float getY(){
+        return this.dishSprite.getY();
     }
 
-    public void moveXY(float x, float y){
-        this.moveX(x);
-        this.moveY(y);
-        this.moveDirtXY(x, y);
+    public void addDirt(Sprite dirt){
+        this.addDirt(dirt, true);
     }
 
-    public void addDirt(Dirt dirt){
-        // TODO: Randomize position on dish
-        dirt.setX(getX() + getWidth() / 2);
-        dirt.setY(getY() + getHeight() / 2);
-        this.dirts.add(dirt);
+    public void addDirt(Sprite dirt, boolean randomizePosition){
+        if(randomizePosition) {
+            // TODO: Randomize position on dish
+            dirt.setX(getX() + this.dishSprite.getWidth() / 2);
+            dirt.setY(getY() + this.dishSprite.getHeight() / 2);
+        }
+        this.dirtSprites.add(dirt);
     }
 
-    public Array<Dirt> getDirts(){
-        return this.dirts;
+    public Array<Sprite> getDirts(){
+        return this.dirtSprites;
     }
 
     public void removeDirt(int i){
-        this.dirts.removeIndex(i);
+        this.dirtSprites.removeIndex(i);
     }
 
-    public void removeDirt(Dirt dirt){
-        this.dirts.removeValue(dirt, true);
+    public void removeDirt(Sprite dirt){
+        this.dirtSprites.removeValue(dirt, true);
     }
 
     private void moveDirtXY(float x, float y){
-        Iterator<Dirt> iter = dirts.iterator();
+        Iterator<Sprite> iter = dirtSprites.iterator();
         while(iter.hasNext()){
-            Dirt dirt = iter.next();
-            dirt.moveX(x);
-            dirt.moveY(y);
+            Sprite dirt = iter.next();
+            dirt.setX(dirt.getX() + x);
+            dirt.setY(dirt.getY() + y);
         }
     }
 }
