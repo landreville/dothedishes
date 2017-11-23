@@ -1,6 +1,7 @@
 package ca.heyneat.dothedishes;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,6 +13,7 @@ import java.util.Iterator;
 import javax.xml.soap.Text;
 
 public class Dish {
+    private final static String TAG = "Dish";
     private Sprite dishSprite;
     private Array<Sprite> dirtSprites;
 
@@ -22,6 +24,10 @@ public class Dish {
 
     public void draw(SpriteBatch batch){
         this.dishSprite.draw(batch);
+    }
+
+    public Rectangle getBoundingRectangle(){
+        return this.dishSprite.getBoundingRectangle();
     }
 
     public Sprite getSprite(){
@@ -46,6 +52,16 @@ public class Dish {
 
     public float getY(){
         return this.dishSprite.getY();
+    }
+
+    public void moveX(int x){
+        Gdx.app.debug(TAG, "Move dish X: " + x);
+        this.setX(this.getX() + x);
+    }
+
+    public void moveY(int y){
+        Gdx.app.debug(TAG, "Move dish Y: " + y);
+        this.setY(this.getY() + y);
     }
 
     public void addDirt(Sprite dirt){

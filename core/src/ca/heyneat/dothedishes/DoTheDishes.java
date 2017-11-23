@@ -1,5 +1,6 @@
 package ca.heyneat.dothedishes;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -157,18 +158,19 @@ public class DoTheDishes extends ApplicationAdapter {
 		locateRackWires();
 		locateInitialDishes();
 
-
 		touchPos = new Vector3();
+		Gdx.input.setInputProcessor(new DishInputProcessor(camera, dishes));
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 	}
 
 	private void locateInitialDishes(){
-		float width = 0;
-		float height = 0;
-		float x = 0;
-		float y = 0;
+		float width;
+		float height;
+		float x;
+		float y;
 		float m = SINK_TOP_Y / (SINK_TOP_LEFT_X - SINK_BOTTOM_LEFT_X);
-		int min = 0;
-		int max = 0;
+		int min;
+		int max;
 		int dishCount = 9;
 
 		float deltaY = 0;
@@ -245,6 +247,10 @@ public class DoTheDishes extends ApplicationAdapter {
 
 	private void renderDishesAndRack(SpriteBatch batch){
         int i = 0;
+        int dishesPerWire = dishes.size/rackWires.size;
+        if(dishesPerWire == 0){
+            dishesPerWire = 1;
+        }
         Iterator<Rectangle> rackIter = rackWires.iterator();
         Iterator<Dish> dishIter = dishes.iterator();
 
@@ -255,7 +261,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
 		while(dishIter.hasNext()){
             // Interweave dishes and rack wires
-            if(i % 3 == 0 && rackIter.hasNext()){
+            if(i % dishesPerWire == 0 && rackIter.hasNext()){
                 Rectangle rackWireRect = rackIter.next();
                 batch.draw(rackWire, rackWireRect.x, rackWireRect.y);
             }
@@ -264,6 +270,11 @@ public class DoTheDishes extends ApplicationAdapter {
             dish.draw(batch);
             i++;
 		}
+
+		while(rackIter.hasNext()){
+		    Rectangle rackWireRect = rackIter.next();
+            batch.draw(rackWire, rackWireRect.x, rackWireRect.y);
+        }
 	}
 
 
