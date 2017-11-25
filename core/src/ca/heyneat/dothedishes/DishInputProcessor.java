@@ -44,7 +44,6 @@ public class DishInputProcessor implements InputProcessor{
 
         Dish dish = this.touchedDish((int)vector.x, (int)vector.y);
         if(dish == null){
-            Gdx.app.debug(TAG, "Touch down -No dish found.");
             return false;
         }
 
@@ -73,8 +72,8 @@ public class DishInputProcessor implements InputProcessor{
         }
         Vector3 vector = this.camera.unproject(new Vector3(screenX, screenY, 0));
 
-        currentDish.moveX((int)vector.x - lastX);
         currentDish.moveY((int)vector.y - lastY);
+        currentDish.moveX((int)vector.x - lastX);
         lastX = (int)vector.x;
         lastY = (int)vector.y;
 
@@ -93,17 +92,11 @@ public class DishInputProcessor implements InputProcessor{
 
     private Dish touchedDish(int x, int y){
         Dish dish = null;
-        Gdx.app.debug(TAG,"X: "+x+" Y: "+y);
 
         for(int i=dishes.size-1; i>=0; i--){
             dish = dishes.get(i);
             Rectangle dishRect = dish.getBoundingRectangle();
-            Gdx.app.debug(TAG,
-                "Rectangle X: "+dishRect.getX()+"-"+(dishRect.getWidth()+dishRect.getX())+
-                        " Y: "+dishRect.getY()+"-"+(dishRect.getHeight()+dishRect.getY())
-            );
             if(dishRect.contains(x, y)){
-                Gdx.app.debug(TAG, "Touched dish "+i);
                 return dish;
             }
         }

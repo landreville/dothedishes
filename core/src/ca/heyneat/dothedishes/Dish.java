@@ -55,12 +55,32 @@ public class Dish {
     }
 
     public void moveX(int x){
-        Gdx.app.debug(TAG, "Move dish X: " + x);
+        if(this.getY() < DoTheDishes.SINK_BOTTOM_Y &&
+                this.getX() >= DoTheDishes.SINK_BOTTOM_LEFT_X &&
+                this.getX() + x <= DoTheDishes.SINK_BOTTOM_LEFT_X){
+            // Dish hits left side of sink.
+            return;
+        }
+        if(this.getY() < DoTheDishes.SINK_BOTTOM_Y &&
+                this.getX() + this.dishSprite.getWidth() <= DoTheDishes.SINK_BOTTOM_RIGHT_X &&
+                this.getX() + this.dishSprite.getWidth() + x >= DoTheDishes.SINK_BOTTOM_RIGHT_X){
+            // Dish hits right side of sink.
+            return;
+        }
         this.setX(this.getX() + x);
     }
 
     public void moveY(int y){
-        Gdx.app.debug(TAG, "Move dish Y: " + y);
+        if(this.getY() + y < DoTheDishes.SINK_BOTTOM_Y &&
+                (this.getX() < DoTheDishes.SINK_BOTTOM_LEFT_X ||
+                 this.getX() + this.dishSprite.getWidth() > DoTheDishes.SINK_BOTTOM_RIGHT_X)){
+            // Hit the counter
+            return;
+        }
+        if(this.getY() + this.dishSprite.getHeight()/2 + y < DoTheDishes.SINK_BOTTOM_Y){
+            // Bottom of sink
+            return;
+        }
         this.setY(this.getY() + y);
     }
 

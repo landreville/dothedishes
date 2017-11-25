@@ -16,11 +16,11 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class DoTheDishes extends ApplicationAdapter {
+    public static final int SINK_BOTTOM_LEFT_X = 421;
+    public static final int SINK_BOTTOM_RIGHT_X = 737;
+    public static final int SINK_BOTTOM_Y = 116;
 	private static final int RES_WIDTH = 800;
 	private static final int RES_HEIGHT = 480;
-	private static final int SINK_BOTTOM_Y = 116;
-	private static final int SINK_BOTTOM_LEFT_X = 421;
-	private static final int SINK_BOTTOM_RIGHT_X = 737;
 	private static final int SINK_TOP_RIGHT_X = 710;
 	private static final int SINK_TOP_LEFT_X = 454;
 	private static final int SINK_TOP_Y = 205;
