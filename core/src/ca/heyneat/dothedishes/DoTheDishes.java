@@ -3,6 +3,7 @@ package ca.heyneat.dothedishes;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -63,6 +64,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
 	private Sprite sponge1;
 	private Sprite sponge2;
+	private Sprite sponge;
 
 	private Sprite background;
 	private Sprite counterFg;
@@ -72,12 +74,14 @@ public class DoTheDishes extends ApplicationAdapter {
 	private Sprite backgroundSprite;
 
 	private Array<Dish> dishes;
+	private Array<Sprite> dirts;
 
 	private Array<Dish> allDish;
 	private Array<Sprite> allDirt;
 	
 	@Override
 	public void create () {
+	    dirts = new Array<Sprite>();
 		rand = new Random();
 		allDirt = new Array<Sprite>();
 		dirt1Tomato = new Sprite(new Texture(Gdx.files.internal("dirt-1-16x32.png")));
@@ -169,6 +173,9 @@ public class DoTheDishes extends ApplicationAdapter {
 
 		sponge1 = new Sprite(new Texture(Gdx.files.internal("sponge-1-64x64.png")));
 		sponge2 = new Sprite(new Texture(Gdx.files.internal("sponge-2-64x64.png")));
+		sponge = rand.nextBoolean() ? sponge1 : sponge2;
+		sponge.setX(735);
+		sponge.setY(140);
 
 		background = new Sprite(new Texture(Gdx.files.internal("background-800x480.png")));
 		counterFg = new Sprite(new Texture(Gdx.files.internal("counter-fg-321x115.png")));
@@ -187,7 +194,11 @@ public class DoTheDishes extends ApplicationAdapter {
 		initializeDishes();
 
 		touchPos = new Vector3();
-		Gdx.input.setInputProcessor(new DishInputProcessor(camera, dishes));
+        InputMultiplexer inputProcessor = new InputMultiplexer();
+        inputProcessor.addProcessor(new SpongeInputProcessor(camera, sponge, dirts));
+        inputProcessor.addProcessor(new DishInputProcessor(camera, dishes));
+
+		Gdx.input.setInputProcessor(inputProcessor);
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 	}
 
@@ -234,7 +245,7 @@ public class DoTheDishes extends ApplicationAdapter {
 			dish.setX(x);
 			dish.setY(y);
 			for(int j=0; j<=rand.nextInt(5); j++) {
-                dish.addDirt(allDirt.get(rand.nextInt(allDirt.size)));
+                dirts.add(dish.addDirt(allDirt.get(rand.nextInt(allDirt.size))));
             }
 			dishes.add(dish);
 		}
@@ -267,12 +278,13 @@ public class DoTheDishes extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
+
 		backgroundSprite.draw(batch);
 
 		renderDishesAndRack(batch);
 
-
 		batch.draw(counterFg, 416, 0);
+        sponge.draw(batch);
 		batch.end();
 	}
 

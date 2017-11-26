@@ -103,17 +103,18 @@ public class Dish {
         this.setY(this.getY() + y);
     }
 
-    public void addDirt(Sprite dirt){
-        this.addDirt(dirt, true);
+    public Sprite addDirt(Sprite dirt){
+        return this.addDirt(dirt, true);
     }
 
-    public void addDirt(Sprite dirt, boolean randomizePosition){
+    public Sprite addDirt(Sprite dirt, boolean randomizePosition){
         Sprite newDirt = new Sprite(dirt.getTexture());
 
         if(randomizePosition) {
             randomizeDirtPosition(newDirt);
         }
         this.dirtSprites.add(newDirt);
+        return newDirt;
     }
 
     private void randomizeDirtPosition(Sprite dirt) {
