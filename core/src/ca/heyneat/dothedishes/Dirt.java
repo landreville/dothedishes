@@ -46,9 +46,6 @@ public class Dirt {
             this.clean = true;
             this.dirtSprite.setAlpha(0);
         }
-
-        Gdx.app.debug(TAG, "Alpha: "+c.a+" Swipes: "+horizontalSwipes+", "+verticalSwipes);
-
     }
 
     public boolean isClean(){
@@ -98,4 +95,5 @@ public class Dirt {
     public Rectangle getBoundingRectangle(){
         return this.dirtSprite.getBoundingRectangle();
     }
+
 }

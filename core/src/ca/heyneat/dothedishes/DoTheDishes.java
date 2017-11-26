@@ -25,42 +25,17 @@ public class DoTheDishes extends ApplicationAdapter {
 	private static final int SINK_TOP_RIGHT_X = 710;
 	private static final int SINK_TOP_LEFT_X = 454;
 	private static final int SINK_TOP_Y = 205;
+	public static final int RACK_TOP_LEFT_X = 180;
+	public static final int RACK_TOP_RIGHT_X = 394;
+	public static final int RACK_BOTTOM_LEFT_X = 140;
+	public static final int RACK_BOTTOM_RIGHT_X = 348;
+	public static final int RACK_TOP_Y = 200;
+	public static final int RACK_BOTTOM_Y = 120;
+	public static final int RACK_HEIGHT = 35;
 
 	private Random rand;
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	private Vector3 touchPos;
-
-	private Sprite dirt1Tomato;
-	private Sprite dirt2Bandaid;
-	private Sprite dirt3Dots;
-	private Sprite dirt4Dots;
-	private Sprite dirt5Cheese;
-	private Sprite dirt6Lips;
-	private Sprite dirt7Smear;
-	private Sprite dirt8Splat;
-	private Sprite dirt9Splat;
-	private Sprite dirt10Blood;
-	private Sprite dirt11Red;
-	private Sprite dirt12Burn;
-
-	private Sprite plate1;
-	private Sprite plate2;
-	private Sprite plate3;
-	private Sprite plate4;
-	private Sprite plate5;
-	private Sprite plate6;
-
-	private Sprite grater;
-	private Sprite pan1;
-	private Sprite pan2;
-	private Sprite strainer;
-	private Sprite tray1;
-	private Sprite tray2;
-	private Sprite tray3;
-
-	private Sprite utensil1;
-	private Sprite utensil2;
 
 	private Sprite sponge1;
 	private Sprite sponge2;
@@ -77,37 +52,30 @@ public class DoTheDishes extends ApplicationAdapter {
 	private Array<Dirt> dirts;
 
 	private Array<Dish> allDish;
-	private Array<Sprite> allDirt;
+	private Array<Texture> allDirt;
+
+	private Dish lastTouched;
+
+	private Drawer drawer;
 	
 	@Override
 	public void create () {
 	    dirts = new Array<Dirt>();
 		rand = new Random();
-		allDirt = new Array<Sprite>();
-		dirt1Tomato = new Sprite(new Texture(Gdx.files.internal("dirt-1-16x32.png")));
-		dirt2Bandaid = new Sprite(new Texture(Gdx.files.internal("dirt-2-64x16.png")));
-		dirt3Dots = new Sprite(new Texture(Gdx.files.internal("dirt-3-16x32.png")));
-		dirt4Dots = new Sprite(new Texture(Gdx.files.internal("dirt-4-16x32.png")));
-		dirt5Cheese = new Sprite(new Texture(Gdx.files.internal("dirt-5-8x32.png")));
-		dirt6Lips = new Sprite(new Texture(Gdx.files.internal("dirt-6-32x16.png")));
-		dirt7Smear = new Sprite(new Texture(Gdx.files.internal("dirt-7-16x16.png")));
-		dirt8Splat = new Sprite(new Texture(Gdx.files.internal("dirt-8-32x32.png")));
-		dirt9Splat = new Sprite(new Texture(Gdx.files.internal("dirt-9-32x32.png")));
-		dirt10Blood = new Sprite(new Texture(Gdx.files.internal("dirt-10-16x16.png")));
-		dirt11Red = new Sprite(new Texture(Gdx.files.internal("dirt-11-16x32.png")));
-		dirt12Burn = new Sprite(new Texture(Gdx.files.internal("dirt-12-32x32.png")));
-		allDirt.add(dirt1Tomato);
-		allDirt.add(dirt2Bandaid);
-		allDirt.add(dirt3Dots);
-		allDirt.add(dirt4Dots);
-		allDirt.add(dirt5Cheese);
-		allDirt.add(dirt6Lips);
-		allDirt.add(dirt7Smear);
-		allDirt.add(dirt8Splat);
-		allDirt.add(dirt9Splat);
-		allDirt.add(dirt10Blood);
-		allDirt.add(dirt11Red);
-		allDirt.add(dirt12Burn);
+
+		allDirt = new Array<Texture>();
+		allDirt.add(new Texture(Gdx.files.internal("dirt-1-16x32.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-2-64x16.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-3-16x32.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-4-16x32.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-5-8x32.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-6-32x16.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-7-16x16.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-8-32x32.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-9-32x32.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-10-16x16.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-11-16x32.png")));
+		allDirt.add(new Texture(Gdx.files.internal("dirt-12-32x32.png")));
 
         allDish = new Array<Dish>();
         allDish.add(new Dish(
@@ -193,13 +161,16 @@ public class DoTheDishes extends ApplicationAdapter {
 		initializeDishRack();
 		initializeDishes();
 
-		touchPos = new Vector3();
+        drawer = new Drawer(dishes, rackWires, rackWire);
+
         InputMultiplexer inputProcessor = new InputMultiplexer();
         inputProcessor.addProcessor(new SpongeInputProcessor(camera, sponge, dirts));
-        inputProcessor.addProcessor(new DishInputProcessor(camera, dishes));
+        inputProcessor.addProcessor(new DishInputProcessor(camera, dishes, drawer));
 
 		Gdx.input.setInputProcessor(inputProcessor);
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+
 	}
 
 	private void initializeDishes(){
@@ -281,49 +252,26 @@ public class DoTheDishes extends ApplicationAdapter {
 
 		backgroundSprite.draw(batch);
 
-		renderDishesAndRack(batch);
+		drawer.drawInOrder(batch);
 
 		batch.draw(counterFg, 416, 0);
         sponge.draw(batch);
 		batch.end();
 	}
 
-	private void renderDishesAndRack(SpriteBatch batch){
-        int i = 0;
-        int dishesPerWire = dishes.size/rackWires.size;
-        if(dishesPerWire == 0){
-            dishesPerWire = 1;
-        }
-        Iterator<Rectangle> rackIter = rackWires.iterator();
-        Iterator<Dish> dishIter = dishes.iterator();
-
-        if(rackIter.hasNext()){
-            Rectangle rackWireRect = rackIter.next();
-            batch.draw(rackWire, rackWireRect.x, rackWireRect.y);
-        }
-
-		while(dishIter.hasNext()){
-            // Interweave dishes and rack wires
-            if(i % dishesPerWire == 0 && rackIter.hasNext()){
-                Rectangle rackWireRect = rackIter.next();
-                batch.draw(rackWire, rackWireRect.x, rackWireRect.y);
-            }
-
-			Dish dish = dishIter.next();
-            dish.draw(batch);
-
-            i++;
-		}
-
-		while(rackIter.hasNext()){
-		    Rectangle rackWireRect = rackIter.next();
-            batch.draw(rackWire, rackWireRect.x, rackWireRect.y);
-        }
-	}
-
-
 	@Override
 	public void dispose () {
-		batch.dispose();
+	    batch.dispose();
+	    for(int i=0; i<allDirt.size; i++){
+	        allDirt.get(i).dispose();
+        }
+        for(int i=0; i<allDish.size; i++){
+            allDish.get(i).dispose();
+        }
+        sponge1.getTexture().dispose();
+        sponge2.getTexture().dispose();
+        background.getTexture().dispose();
+        counterFg.getTexture().dispose();
+        rackWire.getTexture().dispose();
 	}
 }

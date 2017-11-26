@@ -16,11 +16,13 @@ public class DishInputProcessor implements InputProcessor{
     private int lastX;
     private int lastY;
     private OrthographicCamera camera;
+    private Drawer drawer;
 
-    public DishInputProcessor(OrthographicCamera camera, Array<Dish> dishes){
+    public DishInputProcessor(OrthographicCamera camera, Array<Dish> dishes, Drawer drawer){
         this.camera = camera;
         this.dishes = dishes;
-        currentDish = null;
+        this.currentDish = null;
+        this.drawer = drawer;
     }
 
     @Override
@@ -48,6 +50,7 @@ public class DishInputProcessor implements InputProcessor{
         }
 
         currentDish = dish;
+        drawer.setLastTouched(dish);
         lastX = (int)vector.x;
         lastY = (int)vector.y;
 
@@ -59,6 +62,7 @@ public class DishInputProcessor implements InputProcessor{
         if(this.currentDish == null){
             return false;
         }
+
 
         this.currentDish = null;
 
@@ -76,6 +80,13 @@ public class DishInputProcessor implements InputProcessor{
         currentDish.moveX((int)vector.x - lastX);
         lastX = (int)vector.x;
         lastY = (int)vector.y;
+
+        currentDish.setDrying(
+                inRack(
+                        (int)currentDish.getX(),
+                        (int)currentDish.getY()
+                ) && currentDish.isClean()
+        );
 
         return true;
     }
@@ -101,5 +112,12 @@ public class DishInputProcessor implements InputProcessor{
             }
         }
         return null;
+    }
+
+    private boolean inRack(int x, int y){
+        return (y < DoTheDishes.RACK_TOP_Y &&
+                x + currentDish.getWidth() > DoTheDishes.RACK_BOTTOM_LEFT_X &&
+                x < DoTheDishes.RACK_TOP_RIGHT_X
+        );
     }
 }

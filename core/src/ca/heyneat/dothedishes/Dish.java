@@ -1,6 +1,7 @@
 package ca.heyneat.dothedishes;
 
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -15,6 +16,7 @@ public class Dish {
     private Sprite dishSprite;
     private Array<Dirt> dirts;
     private Rectangle dirtArea;
+    private boolean drying = false;
 
     public Dish(Sprite dishSprite, Rectangle dirtArea){
         this.dishSprite = dishSprite;
@@ -69,6 +71,23 @@ public class Dish {
         return this.dishSprite.getY();
     }
 
+    public boolean isClean(){
+        for(int i=0; i<dirts.size; i++){
+            if(!dirts.get(i).isClean()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isDrying() {
+        return drying;
+    }
+
+    public void setDrying(boolean drying) {
+        this.drying = drying;
+    }
+
     public void moveX(int x){
         if(this.getY() < DoTheDishes.SINK_BOTTOM_Y &&
                 this.getX() >= DoTheDishes.SINK_BOTTOM_LEFT_X &&
@@ -99,12 +118,16 @@ public class Dish {
         this.setY(this.getY() + y);
     }
 
-    public Dirt addDirt(Sprite dirt){
+    public void dispose(){
+        this.dishSprite.getTexture().dispose();
+    }
+
+    public Dirt addDirt(Texture dirt){
         return this.addDirt(dirt, true);
     }
 
-    public Dirt addDirt(Sprite dirt, boolean randomizePosition){
-        Dirt newDirt = new Dirt(new Sprite(dirt.getTexture()));
+    public Dirt addDirt(Texture dirt, boolean randomizePosition){
+        Dirt newDirt = new Dirt(new Sprite(dirt));
 
         if(randomizePosition) {
             randomizeDirtPosition(newDirt);
@@ -112,6 +135,7 @@ public class Dish {
         this.dirts.add(newDirt);
         return newDirt;
     }
+
 
     private void randomizeDirtPosition(Dirt dirt) {
         float scale = 1;
