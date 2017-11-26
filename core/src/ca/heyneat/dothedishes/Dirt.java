@@ -51,7 +51,7 @@ public class Dirt {
         return this.clean;
     }
 
-    public void setAlpha(float alpha){
+    public void setAlpha(float alpha) {
         this.dirtSprite.setAlpha(alpha);
     }
 

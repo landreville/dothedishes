@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
-import java.util.Iterator;
 import java.util.Random;
 
 public class Dish {
@@ -94,15 +93,15 @@ public class Dish {
         this.dryingStart = TimeUtils.millis();
     }
 
-    public long timeDrying(){
-        if(this.dryingStart == 0){
+    public long timeDrying() {
+        if (this.dryingStart == 0) {
             return 0;
         }
         return TimeUtils.timeSinceMillis(this.dryingStart);
     }
 
     public void moveX(int x) {
-        if(!canMove()){
+        if (!canMove()) {
             return;
         }
 
@@ -122,7 +121,7 @@ public class Dish {
     }
 
     public void moveY(int y) {
-        if(!canMove()){
+        if (!canMove()) {
             return;
         }
 
@@ -150,48 +149,48 @@ public class Dish {
         return newDirt;
     }
 
-    public boolean fadeOut(float delta){
+    public boolean fadeOut(float delta) {
         Color color = this.dishSprite.getColor();
-        if(alpha - delta <= 0){
+        if (alpha - delta <= 0) {
             alpha = 0;
-        }else{
+        } else {
             alpha -= delta;
         }
 
         color.a = alpha;
         this.dishSprite.setColor(color);
 
-        return alpha == 0 ? true : false;
+        return alpha == 0;
     }
 
-    public boolean fadeIn(float delta){
-        if(!this.fadingIn){
+    public boolean fadeIn(float delta) {
+        if (!this.fadingIn) {
             this.fadingIn = true;
             this.setAlpha(0);
         }
         Color color = this.dishSprite.getColor();
-        if(alpha+ delta >= 1){
+        if (alpha + delta >= 1) {
             alpha = 1;
             this.fadingIn = false;
-        }else{
+        } else {
             alpha += delta;
         }
         color.a = alpha;
         this.dishSprite.setColor(color);
 
-        for(Dirt dirt: dirts){
+        for (Dirt dirt : dirts) {
             dirt.setAlpha(alpha);
         }
 
-        return alpha == 1 ? true : false;
+        return alpha == 1;
     }
 
-    public void setAlpha(float alpha){
+    public void setAlpha(float alpha) {
         this.alpha = alpha;
         this.dishSprite.setAlpha(alpha);
     }
 
-    public boolean canMove(){
+    public boolean canMove() {
         return alpha == 1;
     }
 

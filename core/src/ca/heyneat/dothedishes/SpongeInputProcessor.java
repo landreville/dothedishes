@@ -71,20 +71,20 @@ public class SpongeInputProcessor implements InputProcessor {
         sponge.setX(vector.x - spongeHalfWidth);
         sponge.setY(vector.y - spongeHalfHeight);
 
-        if(sponge.getX() + sponge.getWidth() > DoTheDishes.RES_WIDTH){
+        if (sponge.getX() + sponge.getWidth() > DoTheDishes.RES_WIDTH) {
             sponge.setX(DoTheDishes.RES_WIDTH - sponge.getWidth());
-        }else if(sponge.getX() < 0){
+        } else if (sponge.getX() < 0) {
             sponge.setX(0);
         }
 
-        if(sponge.getY() + sponge.getWidth() > DoTheDishes.RES_HEIGHT){
+        if (sponge.getY() + sponge.getWidth() > DoTheDishes.RES_HEIGHT) {
             sponge.setY(DoTheDishes.RES_HEIGHT - sponge.getHeight());
-        }else if(sponge.getY() < 0){
+        } else if (sponge.getY() < 0) {
             sponge.setY(0);
         }
 
         swipeDirt(vector);
-        
+
         return true;
     }
 
