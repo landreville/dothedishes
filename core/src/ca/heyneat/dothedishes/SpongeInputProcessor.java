@@ -1,13 +1,17 @@
 package ca.heyneat.dothedishes;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Random;
+
 public class SpongeInputProcessor implements InputProcessor {
+    private Random rand;
     private OrthographicCamera camera;
     private Sprite sponge;
     private Array<Dirt> dirts;
@@ -16,14 +20,24 @@ public class SpongeInputProcessor implements InputProcessor {
     private float spongeHalfHeight;
     private Dirt activeDirt;
     private Vector3 dirtEntry;
+    private Array<Sound> scrubSounds;
+    private float lastX;
+    private float lastY;
 
 
-    public SpongeInputProcessor(OrthographicCamera camera, Sprite sponge, Array<Dirt> dirts) {
+    public SpongeInputProcessor(
+            OrthographicCamera camera,
+            Sprite sponge,
+            Array<Dirt> dirts,
+            Array<Sound> scrubSounds
+    ) {
         this.camera = camera;
         this.sponge = sponge;
         this.dirts = dirts;
         this.spongeHalfWidth = sponge.getWidth() / 2;
         this.spongeHalfHeight = sponge.getHeight() / 2;
+        this.scrubSounds = scrubSounds;
+        this.rand = new Random();
     }
 
     @Override
@@ -105,6 +119,7 @@ public class SpongeInputProcessor implements InputProcessor {
             // Starting swipe
             this.activeDirt = dirt;
             this.dirtEntry = vector;
+            this.scrubSounds.get(rand.nextInt(this.scrubSounds.size-1)).play();
         }
     }
 

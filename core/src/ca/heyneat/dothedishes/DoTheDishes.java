@@ -4,6 +4,8 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -33,6 +35,8 @@ public class DoTheDishes extends ApplicationAdapter {
     private Random rand;
     private OrthographicCamera camera;
     private SpriteBatch batch;
+    private Music backgroundSound;
+    private Array<Sound> scrubSounds;
 
     private Sprite sponge1;
     private Sprite sponge2;
@@ -61,6 +65,7 @@ public class DoTheDishes extends ApplicationAdapter {
         dirts = new Array<Dirt>();
         dishes = new Array<Dish>();
 
+        loadSounds();
         loadDirt();
         loadDishes();
         loadBackground();
@@ -74,11 +79,28 @@ public class DoTheDishes extends ApplicationAdapter {
         batch = new SpriteBatch();
 
         InputMultiplexer inputProcessor = new InputMultiplexer();
-        inputProcessor.addProcessor(new SpongeInputProcessor(camera, sponge, dirts));
+        inputProcessor.addProcessor(new SpongeInputProcessor(camera, sponge, dirts, scrubSounds));
         inputProcessor.addProcessor(new DishInputProcessor(camera, dishes, drawer));
 
         Gdx.input.setInputProcessor(inputProcessor);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
+    }
+
+    private void loadSounds() {
+        scrubSounds = new Array<Sound>();
+        backgroundSound = Gdx.audio.newMusic(Gdx.files.internal("audio/background.mp3"));
+        scrubSounds.add(
+                Gdx.audio.newSound(Gdx.files.internal("audio/scrub1.mp3"))
+        );
+        scrubSounds.add(
+                Gdx.audio.newSound(Gdx.files.internal("audio/scrub3.mp3"))
+        );
+        scrubSounds.add(
+                Gdx.audio.newSound(Gdx.files.internal("audio/scrub4.mp3"))
+        );
+
+        backgroundSound.play();
+        backgroundSound.setLooping(true);
     }
 
     private void loadBackground() {
@@ -327,5 +349,9 @@ public class DoTheDishes extends ApplicationAdapter {
         background.getTexture().dispose();
         counterFg.getTexture().dispose();
         rackWire.getTexture().dispose();
+        backgroundSound.dispose();
+        for(Sound sound: scrubSounds) {
+            sound.dispose();
+        }
     }
 }
