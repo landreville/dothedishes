@@ -10,81 +10,78 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.Iterator;
 import java.util.Random;
 
 public class DoTheDishes extends ApplicationAdapter {
     public static final int SINK_BOTTOM_LEFT_X = 421;
     public static final int SINK_BOTTOM_RIGHT_X = 737;
     public static final int SINK_BOTTOM_Y = 116;
-	private static final int RES_WIDTH = 800;
-	private static final int RES_HEIGHT = 480;
-	private static final int SINK_TOP_RIGHT_X = 710;
-	private static final int SINK_TOP_LEFT_X = 454;
-	private static final int SINK_TOP_Y = 205;
-	public static final int RACK_TOP_LEFT_X = 180;
-	public static final int RACK_TOP_RIGHT_X = 394;
-	public static final int RACK_BOTTOM_LEFT_X = 140;
-	public static final int RACK_BOTTOM_RIGHT_X = 348;
-	public static final int RACK_TOP_Y = 200;
-	public static final int RACK_BOTTOM_Y = 120;
-	public static final int RACK_HEIGHT = 35;
+    public static final int RACK_TOP_LEFT_X = 180;
+    public static final int RACK_TOP_RIGHT_X = 394;
+    public static final int RACK_BOTTOM_LEFT_X = 140;
+    public static final int RACK_BOTTOM_RIGHT_X = 348;
+    public static final int RACK_TOP_Y = 200;
+    public static final int RACK_BOTTOM_Y = 120;
+    public static final int RACK_HEIGHT = 35;
+    private static final int RES_WIDTH = 800;
+    private static final int RES_HEIGHT = 480;
+    private static final int SINK_TOP_RIGHT_X = 710;
+    private static final int SINK_TOP_LEFT_X = 454;
+    private static final int SINK_TOP_Y = 205;
+    private Random rand;
+    private OrthographicCamera camera;
+    private SpriteBatch batch;
 
-	private Random rand;
-	private OrthographicCamera camera;
-	private SpriteBatch batch;
+    private Sprite sponge1;
+    private Sprite sponge2;
+    private Sprite sponge;
 
-	private Sprite sponge1;
-	private Sprite sponge2;
-	private Sprite sponge;
+    private Sprite background;
+    private Sprite counterFg;
+    private Sprite rackWire;
 
-	private Sprite background;
-	private Sprite counterFg;
-	private Sprite rackWire;
+    private Array<Rectangle> rackWires;
+    private Sprite backgroundSprite;
 
-	private Array<Rectangle> rackWires;
-	private Sprite backgroundSprite;
+    private Array<Dish> dishes;
+    private Array<Dirt> dirts;
 
-	private Array<Dish> dishes;
-	private Array<Dirt> dirts;
+    private Array<Dish> allDish;
+    private Array<Texture> allDirt;
 
-	private Array<Dish> allDish;
-	private Array<Texture> allDirt;
+    private Dish lastTouched;
 
-	private Dish lastTouched;
+    private Drawer drawer;
 
-	private Drawer drawer;
-	
-	@Override
-	public void create () {
-	    dirts = new Array<Dirt>();
-		rand = new Random();
+    @Override
+    public void create() {
+        dirts = new Array<Dirt>();
+        rand = new Random();
 
-		allDirt = new Array<Texture>();
-		allDirt.add(new Texture(Gdx.files.internal("dirt-1-16x32.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-2-64x16.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-3-16x32.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-4-16x32.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-5-8x32.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-6-32x16.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-7-16x16.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-8-32x32.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-9-32x32.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-10-16x16.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-11-16x32.png")));
-		allDirt.add(new Texture(Gdx.files.internal("dirt-12-32x32.png")));
+        allDirt = new Array<Texture>();
+        allDirt.add(new Texture(Gdx.files.internal("dirt-1-16x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-2-64x16.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-3-16x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-4-16x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-5-8x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-6-32x16.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-7-16x16.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-8-32x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-9-32x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-10-16x16.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-11-16x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-12-32x32.png")));
 
         allDish = new Array<Dish>();
         allDish.add(new Dish(
-            new Sprite(new Texture(Gdx.files.internal("plate-1-128x128.png"))),
-            new Rectangle(20, 20, 88, 88)
+                new Sprite(new Texture(Gdx.files.internal("plate-1-128x128.png"))),
+                new Rectangle(20, 20, 88, 88)
         ));
         allDish.add(new Dish(
                 new Sprite(new Texture(Gdx.files.internal("plate-2-128x128.png"))),
-               new Rectangle(20, 20, 88, 88)
+                new Rectangle(20, 20, 88, 88)
         ));
         allDish.add(new Dish(
                 new Sprite(new Texture(Gdx.files.internal("plate-3-128x128.png"))),
@@ -139,27 +136,27 @@ public class DoTheDishes extends ApplicationAdapter {
                 new Rectangle(1, 95, 30, 32)
         ));
 
-		sponge1 = new Sprite(new Texture(Gdx.files.internal("sponge-1-64x64.png")));
-		sponge2 = new Sprite(new Texture(Gdx.files.internal("sponge-2-64x64.png")));
-		sponge = rand.nextBoolean() ? sponge1 : sponge2;
-		sponge.setX(735);
-		sponge.setY(140);
+        sponge1 = new Sprite(new Texture(Gdx.files.internal("sponge-1-64x64.png")));
+        sponge2 = new Sprite(new Texture(Gdx.files.internal("sponge-2-64x64.png")));
+        sponge = rand.nextBoolean() ? sponge1 : sponge2;
+        sponge.setX(735);
+        sponge.setY(140);
 
-		background = new Sprite(new Texture(Gdx.files.internal("background-800x480.png")));
-		counterFg = new Sprite(new Texture(Gdx.files.internal("counter-fg-321x115.png")));
-		rackWire = new Sprite(new Texture(Gdx.files.internal("rack-wire-227x35.png")));
+        background = new Sprite(new Texture(Gdx.files.internal("background-800x480.png")));
+        counterFg = new Sprite(new Texture(Gdx.files.internal("counter-fg-321x115.png")));
+        rackWire = new Sprite(new Texture(Gdx.files.internal("rack-wire-227x35.png")));
 
-		dishes = new Array<Dish>();
+        dishes = new Array<Dish>();
 
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, RES_WIDTH, RES_HEIGHT);
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, RES_WIDTH, RES_HEIGHT);
 
-		batch = new SpriteBatch();
+        batch = new SpriteBatch();
 
-		backgroundSprite = new Sprite(background);
+        backgroundSprite = new Sprite(background);
 
-		initializeDishRack();
-		initializeDishes();
+        initializeDishRack();
+        initializeDishes();
 
         drawer = new Drawer(dishes, rackWires, rackWire);
 
@@ -167,105 +164,104 @@ public class DoTheDishes extends ApplicationAdapter {
         inputProcessor.addProcessor(new SpongeInputProcessor(camera, sponge, dirts));
         inputProcessor.addProcessor(new DishInputProcessor(camera, dishes, drawer));
 
-		Gdx.input.setInputProcessor(inputProcessor);
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        Gdx.input.setInputProcessor(inputProcessor);
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
 
-	}
+    }
 
-	private void initializeDishes(){
-		float width;
-		float height;
-		float x;
-		float y;
-		float m = SINK_TOP_Y / (SINK_TOP_LEFT_X - SINK_BOTTOM_LEFT_X);
-		int min;
-		int max;
-		int dishCount = 9;
+    private void initializeDishes() {
+        float width;
+        float height;
+        float x;
+        float y;
+        float m = SINK_TOP_Y / (SINK_TOP_LEFT_X - SINK_BOTTOM_LEFT_X);
+        int min;
+        int max;
+        int dishCount = 9;
 
-		float deltaY = 0;
+        float deltaY = 0;
 
-		for(int i=0; i<dishCount; i++) {
-			Dish aDish = this.allDish.get(
-				rand.nextInt(this.allDish.size)
-			);
+        for (int i = 0; i < dishCount; i++) {
+            Dish aDish = this.allDish.get(
+                    rand.nextInt(this.allDish.size)
+            );
 
-			width = aDish.getWidth();
-			height = aDish.getHeight();
+            width = aDish.getWidth();
+            height = aDish.getHeight();
 
-			y = SINK_TOP_Y - height - deltaY;
-			deltaY += rand.nextInt((SINK_TOP_Y - SINK_BOTTOM_Y) / dishCount);
-            if(y < SINK_BOTTOM_Y - height/2){
-                y = SINK_BOTTOM_Y - height/2;
+            y = SINK_TOP_Y - height - deltaY;
+            deltaY += rand.nextInt((SINK_TOP_Y - SINK_BOTTOM_Y) / dishCount);
+            if (y < SINK_BOTTOM_Y - height / 2) {
+                y = SINK_BOTTOM_Y - height / 2;
             }
 
-			max = (int)(SINK_BOTTOM_RIGHT_X - y/m - width);
-			min = (int)(SINK_BOTTOM_LEFT_X + y/m);
-			if(min < SINK_BOTTOM_LEFT_X){
-			    min = SINK_BOTTOM_LEFT_X;
+            max = (int) (SINK_BOTTOM_RIGHT_X - y / m - width);
+            min = (int) (SINK_BOTTOM_LEFT_X + y / m);
+            if (min < SINK_BOTTOM_LEFT_X) {
+                min = SINK_BOTTOM_LEFT_X;
             }
-            if(max > SINK_BOTTOM_RIGHT_X){
-			    max = SINK_BOTTOM_RIGHT_X;
+            if (max > SINK_BOTTOM_RIGHT_X) {
+                max = SINK_BOTTOM_RIGHT_X;
             }
 
-			x = rand.nextInt((max - min) + 1) + min;
+            x = rand.nextInt((max - min) + 1) + min;
 
 
-
-			Dish dish = aDish.copy();
-			dish.setX(x);
-			dish.setY(y);
-			for(int j=0; j<=rand.nextInt(5); j++) {
+            Dish dish = aDish.copy();
+            dish.setX(x);
+            dish.setY(y);
+            for (int j = 0; j <= rand.nextInt(5); j++) {
                 dirts.add(dish.addDirt(allDirt.get(rand.nextInt(allDirt.size))));
             }
-			dishes.add(dish);
-		}
-	}
-
-	private void initializeDishRack() {
-		rackWires = new Array<Rectangle>();
-		int x = 139;
-		int y = 122;
-		for(int i=0; i<8; i++){
-
-			rackWires.add(new Rectangle(
-					x,
-					y,
-					165,
-					26
-			));
-			x += 5;
-			y += 10;
-		}
-		rackWires.reverse();
-	}
-
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);
-
-		batch.begin();
-
-		backgroundSprite.draw(batch);
-
-		drawer.drawInOrder(batch);
-
-		batch.draw(counterFg, 416, 0);
-        sponge.draw(batch);
-		batch.end();
-	}
-
-	@Override
-	public void dispose () {
-	    batch.dispose();
-	    for(int i=0; i<allDirt.size; i++){
-	        allDirt.get(i).dispose();
+            dishes.add(dish);
         }
-        for(int i=0; i<allDish.size; i++){
+    }
+
+    private void initializeDishRack() {
+        rackWires = new Array<Rectangle>();
+        int x = 139;
+        int y = 122;
+        for (int i = 0; i < 8; i++) {
+
+            rackWires.add(new Rectangle(
+                    x,
+                    y,
+                    165,
+                    26
+            ));
+            x += 5;
+            y += 10;
+        }
+        rackWires.reverse();
+    }
+
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+
+        batch.begin();
+
+        backgroundSprite.draw(batch);
+
+        drawer.drawInOrder(batch);
+
+        batch.draw(counterFg, 416, 0);
+        sponge.draw(batch);
+        batch.end();
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        for (int i = 0; i < allDirt.size; i++) {
+            allDirt.get(i).dispose();
+        }
+        for (int i = 0; i < allDish.size; i++) {
             allDish.get(i).dispose();
         }
         sponge1.getTexture().dispose();
@@ -273,5 +269,5 @@ public class DoTheDishes extends ApplicationAdapter {
         background.getTexture().dispose();
         counterFg.getTexture().dispose();
         rackWire.getTexture().dispose();
-	}
+    }
 }

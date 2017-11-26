@@ -18,7 +18,7 @@ public class SpongeInputProcessor implements InputProcessor {
     private Vector3 dirtEntry;
 
 
-    public SpongeInputProcessor(OrthographicCamera camera, Sprite sponge, Array<Dirt> dirts){
+    public SpongeInputProcessor(OrthographicCamera camera, Sprite sponge, Array<Dirt> dirts) {
         this.camera = camera;
         this.sponge = sponge;
         this.dirts = dirts;
@@ -45,7 +45,7 @@ public class SpongeInputProcessor implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 vector = this.camera.unproject(new Vector3(screenX, screenY, 0));
         Rectangle spongeRect = sponge.getBoundingRectangle();
-        if(spongeRect.contains(vector.x, vector.y)){
+        if (spongeRect.contains(vector.x, vector.y)) {
             spongeActive = true;
             return true;
         }
@@ -54,9 +54,9 @@ public class SpongeInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(!spongeActive){
+        if (!spongeActive) {
             return false;
-        }else{
+        } else {
             spongeActive = false;
             return true;
         }
@@ -64,26 +64,26 @@ public class SpongeInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if(!spongeActive){
+        if (!spongeActive) {
             return false;
         }
         Vector3 vector = this.camera.unproject(new Vector3(screenX, screenY, 0));
         sponge.setX(vector.x - spongeHalfWidth);
         sponge.setY(vector.y - spongeHalfHeight);
 
-        Dirt dirt = this.overDirt((int)vector.x, (int)vector.y);
-        if(dirt == null && this.activeDirt != null){
+        Dirt dirt = this.overDirt((int) vector.x, (int) vector.y);
+        if (dirt == null && this.activeDirt != null) {
             // Ending swipe
             SwipeDirection direction;
-            if(Math.abs(vector.x - dirtEntry.x) >= Math.abs(vector.y - dirtEntry.y)){
+            if (Math.abs(vector.x - dirtEntry.x) >= Math.abs(vector.y - dirtEntry.y)) {
                 direction = SwipeDirection.HORIZONTAL;
-            }else{
+            } else {
                 direction = SwipeDirection.VERTICAL;
             }
             this.activeDirt.cleanSwipe(direction);
             this.activeDirt = null;
             this.dirtEntry = null;
-        }else if(dirt != null && this.activeDirt == null){
+        } else if (dirt != null && this.activeDirt == null) {
             // Starting swipe
             this.activeDirt = dirt;
             this.dirtEntry = vector;
@@ -103,12 +103,12 @@ public class SpongeInputProcessor implements InputProcessor {
         return false;
     }
 
-    private Dirt overDirt(int x, int y){
-        Dirt dirt = null;
+    private Dirt overDirt(int x, int y) {
+        Dirt dirt;
 
-        for(int i=dirts.size-1; i>=0; i--){
+        for (int i = dirts.size - 1; i >= 0; i--) {
             dirt = dirts.get(i);
-            if(!dirt.isClean() && dirt.getBoundingRectangle().contains(x, y)){
+            if (!dirt.isClean() && dirt.getBoundingRectangle().contains(x, y)) {
                 return dirt;
             }
         }

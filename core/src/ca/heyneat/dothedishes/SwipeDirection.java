@@ -1,6 +1,6 @@
 package ca.heyneat.dothedishes;
 
-public enum SwipeDirection{
-        VERTICAL,
-        HORIZONTAL,
+public enum SwipeDirection {
+    VERTICAL,
+    HORIZONTAL,
 }
