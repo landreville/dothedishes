@@ -1,5 +1,6 @@
 package ca.heyneat.dothedishes;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -54,6 +55,7 @@ public class AndroidLauncher extends AndroidApplication {
     }
 
 
+    @SuppressLint("ResourceType")
     private AdView createAdView() {
         adView = new AdView(this);
         adView.setAdSize(AdSize.SMART_BANNER);

@@ -43,7 +43,6 @@ public class DoTheDishes extends ApplicationAdapter {
     private Sprite rackWire;
 
     private Array<Rectangle> rackWires;
-    private Sprite backgroundSprite;
 
     private Array<Dish> dishes;
     private Array<Dirt> dirts;
@@ -58,23 +57,43 @@ public class DoTheDishes extends ApplicationAdapter {
 
     @Override
     public void create() {
-        dirts = new Array<Dirt>();
         rand = new Random();
+        dirts = new Array<Dirt>();
+        dishes = new Array<Dish>();
 
-        allDirt = new Array<Texture>();
-        allDirt.add(new Texture(Gdx.files.internal("dirt-1-16x32.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-2-64x16.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-3-16x32.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-4-16x32.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-5-8x32.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-6-32x16.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-7-16x16.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-8-32x32.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-9-32x32.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-10-16x16.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-11-16x32.png")));
-        allDirt.add(new Texture(Gdx.files.internal("dirt-12-32x32.png")));
+        loadDirt();
+        loadDishes();
+        loadBackground();
 
+        initializeDishRack();
+        initializeDishes();
+        drawer = new Drawer(dishes, rackWires, rackWire);
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, RES_WIDTH, RES_HEIGHT);
+        batch = new SpriteBatch();
+
+        InputMultiplexer inputProcessor = new InputMultiplexer();
+        inputProcessor.addProcessor(new SpongeInputProcessor(camera, sponge, dirts));
+        inputProcessor.addProcessor(new DishInputProcessor(camera, dishes, drawer));
+
+        Gdx.input.setInputProcessor(inputProcessor);
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
+    }
+
+    private void loadBackground() {
+        sponge1 = new Sprite(new Texture(Gdx.files.internal("sponge-1-64x64.png")));
+        sponge2 = new Sprite(new Texture(Gdx.files.internal("sponge-2-64x64.png")));
+        sponge = rand.nextBoolean() ? sponge1 : sponge2;
+        sponge.setX(735);
+        sponge.setY(140);
+
+        background = new Sprite(new Texture(Gdx.files.internal("background-800x480.png")));
+        counterFg = new Sprite(new Texture(Gdx.files.internal("counter-fg-321x115.png")));
+        rackWire = new Sprite(new Texture(Gdx.files.internal("rack-wire-227x35.png")));
+    }
+
+    private void loadDishes() {
         allDish = new Array<Dish>();
         allDish.add(new Dish(
                 new Sprite(new Texture(Gdx.files.internal("plate-1-128x128.png"))),
@@ -94,11 +113,11 @@ public class DoTheDishes extends ApplicationAdapter {
         ));
         allDish.add(new Dish(
                 new Sprite(new Texture(Gdx.files.internal("plate-5-96x96.png"))),
-                new Rectangle(15, 15, 65, 65)
+                new Rectangle(15, 15, 60, 60)
         ));
         allDish.add(new Dish(
                 new Sprite(new Texture(Gdx.files.internal("plate-6-96x96.png"))),
-                new Rectangle(15, 15, 65, 65)
+                new Rectangle(15, 15, 60, 60)
         ));
         allDish.add(new Dish(
                 new Sprite(new Texture(Gdx.files.internal("grater-64x92.png"))),
@@ -136,37 +155,22 @@ public class DoTheDishes extends ApplicationAdapter {
                 new Sprite(new Texture(Gdx.files.internal("utensil-2-32x128.png"))),
                 new Rectangle(1, 95, 30, 32)
         ));
+    }
 
-        sponge1 = new Sprite(new Texture(Gdx.files.internal("sponge-1-64x64.png")));
-        sponge2 = new Sprite(new Texture(Gdx.files.internal("sponge-2-64x64.png")));
-        sponge = rand.nextBoolean() ? sponge1 : sponge2;
-        sponge.setX(735);
-        sponge.setY(140);
-
-        background = new Sprite(new Texture(Gdx.files.internal("background-800x480.png")));
-        counterFg = new Sprite(new Texture(Gdx.files.internal("counter-fg-321x115.png")));
-        rackWire = new Sprite(new Texture(Gdx.files.internal("rack-wire-227x35.png")));
-
-        dishes = new Array<Dish>();
-
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, RES_WIDTH, RES_HEIGHT);
-
-        batch = new SpriteBatch();
-
-        backgroundSprite = new Sprite(background);
-
-        initializeDishRack();
-        initializeDishes();
-
-        drawer = new Drawer(dishes, rackWires, rackWire);
-
-        InputMultiplexer inputProcessor = new InputMultiplexer();
-        inputProcessor.addProcessor(new SpongeInputProcessor(camera, sponge, dirts));
-        inputProcessor.addProcessor(new DishInputProcessor(camera, dishes, drawer));
-
-        Gdx.input.setInputProcessor(inputProcessor);
-        Gdx.app.setLogLevel(Application.LOG_DEBUG);
+    private void loadDirt() {
+        allDirt = new Array<Texture>();
+        allDirt.add(new Texture(Gdx.files.internal("dirt-1-16x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-2-64x16.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-3-16x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-4-16x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-5-8x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-6-32x16.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-7-16x16.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-8-32x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-9-32x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-10-16x16.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-11-16x32.png")));
+        allDirt.add(new Texture(Gdx.files.internal("dirt-12-32x32.png")));
     }
 
     private void initializeDishes() {
@@ -258,7 +262,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
         batch.begin();
 
-        backgroundSprite.draw(batch);
+        background.draw(batch);
 
         cycleDishes();
         drawer.drawInOrder(batch);
