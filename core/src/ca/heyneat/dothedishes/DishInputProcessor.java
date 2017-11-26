@@ -42,7 +42,7 @@ public class DishInputProcessor implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 vector = this.camera.unproject(new Vector3(screenX, screenY, 0));
 
-        Dish dish = this.touchedDish((int) vector.x, (int) vector.y);
+        Dish dish = drawer.getTopTouchedDish((int) vector.x, (int) vector.y);
         if (dish == null) {
             return false;
         }
@@ -97,19 +97,6 @@ public class DishInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
-    }
-
-    private Dish touchedDish(int x, int y) {
-        Dish dish;
-
-        for (int i = dishes.size - 1; i >= 0; i--) {
-            dish = dishes.get(i);
-            Rectangle dishRect = dish.getBoundingRectangle();
-            if (dishRect.contains(x, y)) {
-                return dish;
-            }
-        }
-        return null;
     }
 
     private boolean inRack(int x, int y) {
