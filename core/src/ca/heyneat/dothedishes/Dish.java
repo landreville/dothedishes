@@ -1,11 +1,13 @@
 package ca.heyneat.dothedishes;
 
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -17,6 +19,9 @@ public class Dish {
     private Array<Dirt> dirts;
     private Rectangle dirtArea;
     private boolean drying = false;
+    private float alpha = 1;
+    private long dryingStart;
+    private boolean fadingIn = false;
 
     public Dish(Sprite dishSprite, Rectangle dirtArea) {
         this.dishSprite = dishSprite;
@@ -86,9 +91,21 @@ public class Dish {
 
     public void setDrying(boolean drying) {
         this.drying = drying;
+        this.dryingStart = TimeUtils.millis();
+    }
+
+    public long timeDrying(){
+        if(this.dryingStart == 0){
+            return 0;
+        }
+        return TimeUtils.timeSinceMillis(this.dryingStart);
     }
 
     public void moveX(int x) {
+        if(!canMove()){
+            return;
+        }
+
         if (this.getY() < DoTheDishes.SINK_BOTTOM_Y &&
                 this.getX() >= DoTheDishes.SINK_BOTTOM_LEFT_X &&
                 this.getX() + x <= DoTheDishes.SINK_BOTTOM_LEFT_X) {
@@ -105,6 +122,10 @@ public class Dish {
     }
 
     public void moveY(int y) {
+        if(!canMove()){
+            return;
+        }
+
         if (this.getY() + y < DoTheDishes.SINK_BOTTOM_Y &&
                 (this.getX() < DoTheDishes.SINK_BOTTOM_LEFT_X ||
                         this.getX() + this.dishSprite.getWidth() > DoTheDishes.SINK_BOTTOM_RIGHT_X)) {
@@ -129,6 +150,50 @@ public class Dish {
         return newDirt;
     }
 
+    public boolean fadeOut(float delta){
+        Color color = this.dishSprite.getColor();
+        if(alpha - delta <= 0){
+            alpha = 0;
+        }else{
+            alpha -= delta;
+        }
+
+        color.a = alpha;
+        this.dishSprite.setColor(color);
+
+        return alpha == 0 ? true : false;
+    }
+
+    public boolean fadeIn(float delta){
+        if(!this.fadingIn){
+            this.fadingIn = true;
+            this.setAlpha(0);
+        }
+        Color color = this.dishSprite.getColor();
+        if(alpha+ delta >= 1){
+            alpha = 1;
+            this.fadingIn = false;
+        }else{
+            alpha += delta;
+        }
+        color.a = alpha;
+        this.dishSprite.setColor(color);
+
+        for(Dirt dirt: dirts){
+            dirt.setAlpha(alpha);
+        }
+
+        return alpha == 1 ? true : false;
+    }
+
+    public void setAlpha(float alpha){
+        this.alpha = alpha;
+        this.dishSprite.setAlpha(alpha);
+    }
+
+    public boolean canMove(){
+        return alpha == 1;
+    }
 
     private void randomizeDirtPosition(Dirt dirt) {
         float scale = 1;

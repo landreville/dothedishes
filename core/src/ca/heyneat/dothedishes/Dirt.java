@@ -51,6 +51,10 @@ public class Dirt {
         return this.clean;
     }
 
+    public void setAlpha(float alpha){
+        this.dirtSprite.setAlpha(alpha);
+    }
+
     public void setRotation(float degrees) {
         dirtSprite.setRotation(degrees);
     }

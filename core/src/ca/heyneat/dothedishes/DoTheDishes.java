@@ -25,8 +25,8 @@ public class DoTheDishes extends ApplicationAdapter {
     public static final int RACK_TOP_Y = 200;
     public static final int RACK_BOTTOM_Y = 120;
     public static final int RACK_HEIGHT = 35;
-    private static final int RES_WIDTH = 800;
-    private static final int RES_HEIGHT = 480;
+    public static final int RES_WIDTH = 800;
+    public static final int RES_HEIGHT = 480;
     private static final int SINK_TOP_RIGHT_X = 710;
     private static final int SINK_TOP_LEFT_X = 454;
     private static final int SINK_TOP_Y = 205;
@@ -51,7 +51,8 @@ public class DoTheDishes extends ApplicationAdapter {
     private Array<Dish> allDish;
     private Array<Texture> allDirt;
 
-    private Dish lastTouched;
+    private Dish leaving;
+    private Dish coming;
 
     private Drawer drawer;
 
@@ -166,8 +167,6 @@ public class DoTheDishes extends ApplicationAdapter {
 
         Gdx.input.setInputProcessor(inputProcessor);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
-
-
     }
 
     private void initializeDishes() {
@@ -175,7 +174,7 @@ public class DoTheDishes extends ApplicationAdapter {
         float height;
         float x;
         float y;
-        float m = SINK_TOP_Y / (SINK_TOP_LEFT_X - SINK_BOTTOM_LEFT_X);
+
         int min;
         int max;
         int dishCount = 9;
@@ -183,39 +182,52 @@ public class DoTheDishes extends ApplicationAdapter {
         float deltaY = 0;
 
         for (int i = 0; i < dishCount; i++) {
-            Dish aDish = this.allDish.get(
-                    rand.nextInt(this.allDish.size)
-            );
-
-            width = aDish.getWidth();
-            height = aDish.getHeight();
-
-            y = SINK_TOP_Y - height - deltaY;
             deltaY += rand.nextInt((SINK_TOP_Y - SINK_BOTTOM_Y) / dishCount);
-            if (y < SINK_BOTTOM_Y - height / 2) {
-                y = SINK_BOTTOM_Y - height / 2;
-            }
-
-            max = (int) (SINK_BOTTOM_RIGHT_X - y / m - width);
-            min = (int) (SINK_BOTTOM_LEFT_X + y / m);
-            if (min < SINK_BOTTOM_LEFT_X) {
-                min = SINK_BOTTOM_LEFT_X;
-            }
-            if (max > SINK_BOTTOM_RIGHT_X) {
-                max = SINK_BOTTOM_RIGHT_X;
-            }
-
-            x = rand.nextInt((max - min) + 1) + min;
-
-
-            Dish dish = aDish.copy();
-            dish.setX(x);
-            dish.setY(y);
-            for (int j = 0; j <= rand.nextInt(5); j++) {
-                dirts.add(dish.addDirt(allDirt.get(rand.nextInt(allDirt.size))));
-            }
-            dishes.add(dish);
+            dishes.add(placeDishInSink(deltaY));
         }
+    }
+
+    private Dish placeDishInSink(float deltaY) {
+        float width;
+        float height;
+        float y;
+        int max;
+        int min;
+        float x;
+        float m = SINK_TOP_Y / (SINK_TOP_LEFT_X - SINK_BOTTOM_LEFT_X);
+        Dish aDish = this.allDish.get(
+                rand.nextInt(this.allDish.size)
+        );
+
+        width = aDish.getWidth();
+        height = aDish.getHeight();
+
+        y = SINK_TOP_Y - height - deltaY;
+
+        if (y < SINK_BOTTOM_Y - height / 2) {
+            y = SINK_BOTTOM_Y - height / 2;
+        }
+
+        max = (int) (SINK_BOTTOM_RIGHT_X - y / m - width);
+        min = (int) (SINK_BOTTOM_LEFT_X + y / m);
+        if (min < SINK_BOTTOM_LEFT_X) {
+            min = SINK_BOTTOM_LEFT_X;
+        }
+        if (max > SINK_BOTTOM_RIGHT_X) {
+            max = SINK_BOTTOM_RIGHT_X;
+        }
+
+        x = rand.nextInt((max - min) + 1) + min;
+
+
+        Dish dish = aDish.copy();
+        dish.setX(x);
+        dish.setY(y);
+        for (int j = 0; j <= rand.nextInt(5); j++) {
+            dirts.add(dish.addDirt(allDirt.get(rand.nextInt(allDirt.size))));
+        }
+
+        return dish;
     }
 
     private void initializeDishRack() {
@@ -248,11 +260,53 @@ public class DoTheDishes extends ApplicationAdapter {
 
         backgroundSprite.draw(batch);
 
+        cycleDishes();
         drawer.drawInOrder(batch);
 
         batch.draw(counterFg, 416, 0);
         sponge.draw(batch);
         batch.end();
+    }
+
+    private void cycleDishes(){
+        Array<Dish> cleanDishes = new Array<Dish>();
+        boolean gone = false;
+        boolean here = false;
+        Dish dryingDish;
+
+        for(Dish dish: dishes){
+            if(dish.isDrying() && dish.isClean()){
+                cleanDishes.add(dish);
+            }
+        }
+
+        if(cleanDishes.size > dishes.size/2 && leaving == null) {
+            dryingDish = cleanDishes.get(rand.nextInt(cleanDishes.size-1));
+            if(dryingDish.timeDrying() > 3000) {
+                this.leaving = dryingDish;
+            }
+        }
+
+        if(leaving != null) {
+            gone = leaving.fadeOut(Gdx.graphics.getDeltaTime() * 0.3f);
+            if(gone) {
+                dishes.removeValue(leaving, true);
+                leaving = null;
+            }
+        }
+
+        if(leaving != null && coming == null) {
+            coming = placeDishInSink(0);
+            dishes.insert(0, coming);
+        }
+
+        if(coming != null) {
+            here = coming.fadeIn(Gdx.graphics.getDeltaTime() * 0.3f);
+            if(here){
+                coming = null;
+            }
+        }
+
     }
 
     @Override
