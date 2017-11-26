@@ -17,9 +17,9 @@ import com.google.android.gms.ads.AdView;
 
 public class AndroidLauncher extends AndroidApplication {
     private static final String AD_UNIT_ID = "ca-app-pub-3577738217405107/1958169537";
-    private static final String GOOGLE_PLAY_URL = "";
     protected AdView adView;
     protected View gameView;
+    private boolean enableAds = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +29,14 @@ public class AndroidLauncher extends AndroidApplication {
         cfg.useAccelerometer = false;
         cfg.useCompass = false;
 
+        if(enableAds){
+            createWithAds(cfg);
+        }else {
+            initialize(new DoTheDishes(), cfg);
+        }
+    }
+
+    private void createWithAds(AndroidApplicationConfiguration cfg) {
         // Do the stuff that initialize() would do for you
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(
@@ -38,9 +46,9 @@ public class AndroidLauncher extends AndroidApplication {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
         RelativeLayout layout = new RelativeLayout(this);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT
+        LayoutParams params = new LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT
         );
         layout.setLayoutParams(params);
 
@@ -51,7 +59,6 @@ public class AndroidLauncher extends AndroidApplication {
 
         setContentView(layout);
         startAdvertising(admobView);
-
     }
 
 
@@ -60,7 +67,7 @@ public class AndroidLauncher extends AndroidApplication {
         adView = new AdView(this);
         adView.setAdSize(AdSize.SMART_BANNER);
         adView.setAdUnitId(AD_UNIT_ID);
-        //adView.setId(12345);
+        adView.setId(12345);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT
         );

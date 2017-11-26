@@ -83,7 +83,7 @@ public class DoTheDishes extends ApplicationAdapter {
         inputProcessor.addProcessor(new DishInputProcessor(camera, dishes, drawer));
 
         Gdx.input.setInputProcessor(inputProcessor);
-        Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        Gdx.app.setLogLevel(Application.LOG_NONE);
     }
 
     private void loadSounds() {

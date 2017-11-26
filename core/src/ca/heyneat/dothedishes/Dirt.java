@@ -19,8 +19,8 @@ public class Dirt {
     public Dirt(Sprite dirtSprite) {
         this.rand = new Random();
         this.dirtSprite = dirtSprite;
-        this.verticalSwipes = rand.nextInt(20);
-        this.horizontalSwipes = rand.nextInt(20);
+        this.verticalSwipes = rand.nextInt(10);
+        this.horizontalSwipes = rand.nextInt(10);
     }
 
     public void cleanSwipe(SwipeDirection direction) {
@@ -40,8 +40,8 @@ public class Dirt {
             this.dirtSprite.setColor(c);
         }
 
-        if ((verticalSwipes <= 0 && (horizontalSwipes <= 0 || verticalSwipes <= horizontalSwipes * 5))
-                || horizontalSwipes <= 0 && (verticalSwipes <= 0 || horizontalSwipes <= verticalSwipes * 5)) {
+        if ((verticalSwipes <= 0 && (horizontalSwipes <= 0 || verticalSwipes <= horizontalSwipes * 2))
+                || horizontalSwipes <= 0 && (verticalSwipes <= 0 || horizontalSwipes <= verticalSwipes * 2)) {
             this.clean = true;
             this.dirtSprite.setAlpha(0);
         }
