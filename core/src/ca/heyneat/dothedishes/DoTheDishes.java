@@ -74,14 +74,14 @@ public class DoTheDishes extends ApplicationAdapter {
 	private Sprite backgroundSprite;
 
 	private Array<Dish> dishes;
-	private Array<Sprite> dirts;
+	private Array<Dirt> dirts;
 
 	private Array<Dish> allDish;
 	private Array<Sprite> allDirt;
 	
 	@Override
 	public void create () {
-	    dirts = new Array<Sprite>();
+	    dirts = new Array<Dirt>();
 		rand = new Random();
 		allDirt = new Array<Sprite>();
 		dirt1Tomato = new Sprite(new Texture(Gdx.files.internal("dirt-1-16x32.png")));

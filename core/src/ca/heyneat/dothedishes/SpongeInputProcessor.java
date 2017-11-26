@@ -10,13 +10,15 @@ import com.badlogic.gdx.utils.Array;
 public class SpongeInputProcessor implements InputProcessor {
     private OrthographicCamera camera;
     private Sprite sponge;
-    private Array<Sprite> dirts;
+    private Array<Dirt> dirts;
     private boolean spongeActive = false;
     private float spongeHalfWidth;
     private float spongeHalfHeight;
+    private Dirt activeDirt;
+    private Vector3 dirtEntry;
 
 
-    public SpongeInputProcessor(OrthographicCamera camera, Sprite sponge, Array<Sprite> dirts){
+    public SpongeInputProcessor(OrthographicCamera camera, Sprite sponge, Array<Dirt> dirts){
         this.camera = camera;
         this.sponge = sponge;
         this.dirts = dirts;
@@ -68,7 +70,27 @@ public class SpongeInputProcessor implements InputProcessor {
         Vector3 vector = this.camera.unproject(new Vector3(screenX, screenY, 0));
         sponge.setX(vector.x - spongeHalfWidth);
         sponge.setY(vector.y - spongeHalfHeight);
-        return false;
+
+        Dirt dirt = this.overDirt((int)vector.x, (int)vector.y);
+        if(dirt == null && this.activeDirt != null){
+            // Ending swipe
+            SwipeDirection direction;
+            if(Math.abs(vector.x - dirtEntry.x) >= Math.abs(vector.y - dirtEntry.y)){
+                direction = SwipeDirection.HORIZONTAL;
+            }else{
+                direction = SwipeDirection.VERTICAL;
+            }
+            this.activeDirt.cleanSwipe(direction);
+            this.activeDirt = null;
+            this.dirtEntry = null;
+        }else if(dirt != null && this.activeDirt == null){
+            // Starting swipe
+            this.activeDirt = dirt;
+            this.dirtEntry = vector;
+        }
+
+
+        return true;
     }
 
     @Override
@@ -79,5 +101,17 @@ public class SpongeInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    private Dirt overDirt(int x, int y){
+        Dirt dirt = null;
+
+        for(int i=dirts.size-1; i>=0; i--){
+            dirt = dirts.get(i);
+            if(!dirt.isClean() && dirt.getBoundingRectangle().contains(x, y)){
+                return dirt;
+            }
+        }
+        return null;
     }
 }

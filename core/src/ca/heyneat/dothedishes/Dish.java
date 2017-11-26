@@ -1,8 +1,6 @@
 package ca.heyneat.dothedishes;
 
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -11,18 +9,16 @@ import com.badlogic.gdx.utils.Array;
 import java.util.Iterator;
 import java.util.Random;
 
-import javax.xml.soap.Text;
-
 public class Dish {
     private final static String TAG = "Dish";
     private Random rand;
     private Sprite dishSprite;
-    private Array<Sprite> dirtSprites;
+    private Array<Dirt> dirts;
     private Rectangle dirtArea;
 
     public Dish(Sprite dishSprite, Rectangle dirtArea){
         this.dishSprite = dishSprite;
-        this.dirtSprites = new Array<Sprite>();
+        this.dirts = new Array<Dirt>();
         this.dirtArea = dirtArea;
         this.rand = new Random();
     }
@@ -36,8 +32,8 @@ public class Dish {
 
     public void draw(SpriteBatch batch){
         this.dishSprite.draw(batch);
-        for(int i=0; i<dirtSprites.size; i++){
-            dirtSprites.get(i).draw(batch);
+        for(int i = 0; i< dirts.size; i++){
+            dirts.get(i).draw(batch);
         }
     }
 
@@ -103,21 +99,21 @@ public class Dish {
         this.setY(this.getY() + y);
     }
 
-    public Sprite addDirt(Sprite dirt){
+    public Dirt addDirt(Sprite dirt){
         return this.addDirt(dirt, true);
     }
 
-    public Sprite addDirt(Sprite dirt, boolean randomizePosition){
-        Sprite newDirt = new Sprite(dirt.getTexture());
+    public Dirt addDirt(Sprite dirt, boolean randomizePosition){
+        Dirt newDirt = new Dirt(new Sprite(dirt.getTexture()));
 
         if(randomizePosition) {
             randomizeDirtPosition(newDirt);
         }
-        this.dirtSprites.add(newDirt);
+        this.dirts.add(newDirt);
         return newDirt;
     }
 
-    private void randomizeDirtPosition(Sprite dirt) {
+    private void randomizeDirtPosition(Dirt dirt) {
         float scale = 1;
         float yscale = 1;
 
@@ -157,25 +153,13 @@ public class Dish {
         dirt.setScale(scale);
         dirt.setX(x);
         dirt.setY(y);
-        dirt.rotate(rand.nextInt(15) * (rand.nextBoolean() ? 1 : -1));
-    }
-
-    public Array<Sprite> getDirts(){
-        return this.dirtSprites;
-    }
-
-    public void removeDirt(int i){
-        this.dirtSprites.removeIndex(i);
-    }
-
-    public void removeDirt(Sprite dirt){
-        this.dirtSprites.removeValue(dirt, true);
+        dirt.setRotation(rand.nextInt(15) * (rand.nextBoolean() ? 1 : -1));
     }
 
     private void moveDirtXY(float x, float y){
-        Iterator<Sprite> iter = dirtSprites.iterator();
+        Iterator<Dirt> iter = dirts.iterator();
         while(iter.hasNext()){
-            Sprite dirt = iter.next();
+            Dirt dirt = iter.next();
             dirt.setX(dirt.getX() + x);
             dirt.setY(dirt.getY() + y);
         }
