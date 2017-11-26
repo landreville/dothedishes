@@ -73,7 +73,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
 	private Array<Dish> dishes;
 
-	private Array<Sprite> allDish;
+	private Array<Dish> allDish;
 	private Array<Sprite> allDirt;
 	
 	@Override
@@ -105,39 +105,67 @@ public class DoTheDishes extends ApplicationAdapter {
 		allDirt.add(dirt11Red);
 		allDirt.add(dirt12Burn);
 
-		plate1 = new Sprite(new Texture(Gdx.files.internal("plate-1-128x128.png")));
-		plate2 = new Sprite(new Texture(Gdx.files.internal("plate-2-128x128.png")));
-		plate3 = new Sprite(new Texture(Gdx.files.internal("plate-3-128x128.png")));
-		plate4 = new Sprite(new Texture(Gdx.files.internal("plate-4-128x128.png")));
-		plate5 = new Sprite(new Texture(Gdx.files.internal("plate-5-96x96.png")));
-		plate6 = new Sprite(new Texture(Gdx.files.internal("plate-6-96x96.png")));
-
-		grater = new Sprite(new Texture(Gdx.files.internal("grater-64x92.png")));
-		pan1 = new Sprite(new Texture(Gdx.files.internal("pan-1-128x128.png")));
-		pan2 = new Sprite(new Texture(Gdx.files.internal("pan-2-128x128.png")));
-		strainer = new Sprite(new Texture(Gdx.files.internal("strainer-128x128.png")));
-		tray1 = new Sprite(new Texture(Gdx.files.internal("tray-1-256x128.png")));
-		tray2 = new Sprite(new Texture(Gdx.files.internal("tray-2-192x96.png")));
-		tray3 = new Sprite(new Texture(Gdx.files.internal("tray-3-128x64.png")));
-		utensil1 = new Sprite(new Texture(Gdx.files.internal("utensil-1-32x128.png")));
-		utensil2 = new Sprite(new Texture(Gdx.files.internal("utensil-2-32x128.png")));
-
-		allDish = new Array<Sprite>();
-		allDish.add(plate1);
-		allDish.add(plate2);
-		allDish.add(plate3);
-		allDish.add(plate4);
-		allDish.add(plate5);
-		allDish.add(plate6);
-		allDish.add(grater);
-		allDish.add(pan1);
-		allDish.add(pan2);
-		allDish.add(strainer);
-		allDish.add(tray1);
-		allDish.add(tray2);
-		allDish.add(tray3);
-		allDish.add(utensil1);
-		allDish.add(utensil2);
+        allDish = new Array<Dish>();
+        allDish.add(new Dish(
+            new Sprite(new Texture(Gdx.files.internal("plate-1-128x128.png"))),
+            new Rectangle(20, 20, 88, 88)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("plate-2-128x128.png"))),
+               new Rectangle(20, 20, 88, 88)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("plate-3-128x128.png"))),
+                new Rectangle(20, 20, 88, 88)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("plate-4-128x128.png"))),
+                new Rectangle(20, 20, 88, 88)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("plate-5-96x96.png"))),
+                new Rectangle(15, 15, 65, 65)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("plate-6-96x96.png"))),
+                new Rectangle(15, 15, 65, 65)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("grater-64x92.png"))),
+                new Rectangle(12, 0, 40, 80)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("pan-1-128x128.png"))),
+                new Rectangle(19, 19, 85, 85)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("pan-2-128x128.png"))),
+                new Rectangle(19, 19, 85, 85)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("strainer-128x128.png"))),
+                new Rectangle(29, 19, 85, 85)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("tray-1-256x128.png"))),
+                new Rectangle(21, 7, 214, 113)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("tray-2-192x96.png"))),
+                new Rectangle(21, 7, 107, 56)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("tray-3-128x64.png"))),
+                new Rectangle(3, 3, 121, 58)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("utensil-1-32x128.png"))),
+                new Rectangle(5, 96, 22, 27)
+        ));
+        allDish.add(new Dish(
+                new Sprite(new Texture(Gdx.files.internal("utensil-2-32x128.png"))),
+                new Rectangle(1, 95, 30, 32)
+        ));
 
 		sponge1 = new Sprite(new Texture(Gdx.files.internal("sponge-1-64x64.png")));
 		sponge2 = new Sprite(new Texture(Gdx.files.internal("sponge-2-64x64.png")));
@@ -155,15 +183,15 @@ public class DoTheDishes extends ApplicationAdapter {
 
 		backgroundSprite = new Sprite(background);
 
-		locateRackWires();
-		locateInitialDishes();
+		initializeDishRack();
+		initializeDishes();
 
 		touchPos = new Vector3();
 		Gdx.input.setInputProcessor(new DishInputProcessor(camera, dishes));
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 	}
 
-	private void locateInitialDishes(){
+	private void initializeDishes(){
 		float width;
 		float height;
 		float x;
@@ -176,12 +204,12 @@ public class DoTheDishes extends ApplicationAdapter {
 		float deltaY = 0;
 
 		for(int i=0; i<dishCount; i++) {
-			Sprite dishSprite = this.allDish.get(
+			Dish aDish = this.allDish.get(
 				rand.nextInt(this.allDish.size)
 			);
 
-			width = dishSprite.getWidth();
-			height = dishSprite.getHeight();
+			width = aDish.getWidth();
+			height = aDish.getHeight();
 
 			y = SINK_TOP_Y - height - deltaY;
 			deltaY += rand.nextInt((SINK_TOP_Y - SINK_BOTTOM_Y) / dishCount);
@@ -202,14 +230,17 @@ public class DoTheDishes extends ApplicationAdapter {
 
 
 
-			Dish dish = new Dish(dishSprite);
+			Dish dish = aDish.copy();
 			dish.setX(x);
 			dish.setY(y);
+			for(int j=0; j<=rand.nextInt(5); j++) {
+                dish.addDirt(allDirt.get(rand.nextInt(allDirt.size)));
+            }
 			dishes.add(dish);
 		}
 	}
 
-	private void locateRackWires() {
+	private void initializeDishRack() {
 		rackWires = new Array<Rectangle>();
 		int x = 139;
 		int y = 122;
@@ -268,6 +299,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
 			Dish dish = dishIter.next();
             dish.draw(batch);
+
             i++;
 		}
 
