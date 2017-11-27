@@ -318,47 +318,6 @@ public class DoTheDishes extends ApplicationAdapter {
         }
     }
 
-    private void cycleDishes() {
-        Array<Dish> cleanDishes = new Array<Dish>();
-        boolean gone;
-        boolean here;
-        Dish dryingDish;
-
-        for (Dish dish : dishes) {
-            if (dish.isDrying() && dish.isClean()) {
-                cleanDishes.add(dish);
-            }
-        }
-
-        if (cleanDishes.size > dishes.size / 2 && leaving == null) {
-            dryingDish = cleanDishes.get(rand.nextInt(cleanDishes.size - 1));
-            if (dryingDish.timeDrying() > 3000) {
-                this.leaving = dryingDish;
-            }
-        }
-
-        if (leaving != null) {
-            gone = leaving.fadeOut(Gdx.graphics.getDeltaTime() * 0.3f);
-            if (gone) {
-                dishes.removeValue(leaving, true);
-                leaving = null;
-            }
-        }
-
-        if (leaving != null && coming == null) {
-            coming = placeDishInSink(0);
-            dishes.insert(0, coming);
-        }
-
-        if (coming != null) {
-            here = coming.fadeIn(Gdx.graphics.getDeltaTime() * 0.3f);
-            if (here) {
-                coming = null;
-            }
-        }
-
-    }
-
     @Override
     public void dispose() {
         batch.dispose();

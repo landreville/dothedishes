@@ -18,9 +18,7 @@ public class Dish {
     private Array<Dirt> dirts;
     private Rectangle dirtArea;
     private boolean drying = false;
-    private float alpha = 1;
     private long dryingStart;
-    private boolean fadingIn = false;
     private boolean droppingIn = false;
     private int dropToY;
 
@@ -109,9 +107,6 @@ public class Dish {
     }
 
     public void moveX(int x) {
-        if (!canMove()) {
-            return;
-        }
 
         if (this.getY() < DoTheDishes.SINK_BOTTOM_Y &&
                 this.getX() >= DoTheDishes.SINK_BOTTOM_LEFT_X &&
@@ -129,9 +124,6 @@ public class Dish {
     }
 
     public void moveY(int y) {
-        if (!canMove()) {
-            return;
-        }
 
         if (this.getY() + y < DoTheDishes.SINK_BOTTOM_Y &&
                 (this.getX() < DoTheDishes.SINK_BOTTOM_LEFT_X ||
@@ -157,42 +149,6 @@ public class Dish {
         return newDirt;
     }
 
-    public boolean fadeOut(float delta) {
-        Color color = this.dishSprite.getColor();
-        if (alpha - delta <= 0) {
-            alpha = 0;
-        } else {
-            alpha -= delta;
-        }
-
-        color.a = alpha;
-        this.dishSprite.setColor(color);
-
-        return alpha == 0;
-    }
-
-    public boolean fadeIn(float delta) {
-        if (!this.fadingIn) {
-            this.fadingIn = true;
-            this.setAlpha(0);
-        }
-        Color color = this.dishSprite.getColor();
-        if (alpha + delta >= 1) {
-            alpha = 1;
-            this.fadingIn = false;
-        } else {
-            alpha += delta;
-        }
-        color.a = alpha;
-        this.dishSprite.setColor(color);
-
-        for (Dirt dirt : dirts) {
-            dirt.setAlpha(alpha);
-        }
-
-        return alpha == 1;
-    }
-
     public boolean dropIn(int delta){
         if(this.getY() - delta < this.dropToY){
             this.setY(this.dropToY);
@@ -206,15 +162,6 @@ public class Dish {
 
     public boolean isDroppingIn(){
         return this.droppingIn;
-    }
-
-    public void setAlpha(float alpha) {
-        this.alpha = alpha;
-        this.dishSprite.setAlpha(alpha);
-    }
-
-    public boolean canMove() {
-        return alpha == 1;
     }
 
     private void randomizeDirtPosition(Dirt dirt) {
