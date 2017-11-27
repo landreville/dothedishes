@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import java.util.Random;
 
 public class Dirt {
+    private static final int MAX_SCRUBS = 15;
     private static final String TAG = "Dirt";
     private Random rand;
     private Sprite dirtSprite;
@@ -19,8 +20,8 @@ public class Dirt {
     public Dirt(Sprite dirtSprite) {
         this.rand = new Random();
         this.dirtSprite = dirtSprite;
-        this.verticalSwipes = rand.nextInt(10);
-        this.horizontalSwipes = rand.nextInt(10);
+        this.verticalSwipes = rand.nextInt(MAX_SCRUBS);
+        this.horizontalSwipes = rand.nextInt(MAX_SCRUBS);
     }
 
     public void cleanSwipe(SwipeDirection direction) {
@@ -36,7 +37,7 @@ public class Dirt {
 
         Color c = this.dirtSprite.getColor();
         if (c.a > 0.25) {
-            c.a = (float) (c.a - (rand.nextFloat() * 0.1));
+            c.a = (float) (c.a - (rand.nextFloat() * 0.15));
             this.dirtSprite.setColor(c);
         }
 

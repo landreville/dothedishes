@@ -21,6 +21,8 @@ public class Dish {
     private float alpha = 1;
     private long dryingStart;
     private boolean fadingIn = false;
+    private boolean droppingIn = false;
+    private int dropToY;
 
     public Dish(Sprite dishSprite, Rectangle dirtArea) {
         this.dishSprite = dishSprite;
@@ -41,6 +43,12 @@ public class Dish {
         for (int i = 0; i < dirts.size; i++) {
             dirts.get(i).draw(batch);
         }
+    }
+
+    public void startDropIn(int dropToY){
+        this.setY(DoTheDishes.RES_HEIGHT + rand.nextInt(150));
+        this.droppingIn = true;
+        this.dropToY = dropToY;
     }
 
     public Rectangle getBoundingRectangle() {
@@ -183,6 +191,21 @@ public class Dish {
         }
 
         return alpha == 1;
+    }
+
+    public boolean dropIn(int delta){
+        if(this.getY() - delta < this.dropToY){
+            this.setY(this.dropToY);
+            this.droppingIn = false;
+            return true;
+        }else {
+            this.moveY(-delta);
+            return false;
+        }
+    }
+
+    public boolean isDroppingIn(){
+        return this.droppingIn;
     }
 
     public void setAlpha(float alpha) {

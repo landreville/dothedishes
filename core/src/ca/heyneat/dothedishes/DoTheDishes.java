@@ -32,6 +32,8 @@ public class DoTheDishes extends ApplicationAdapter {
     private static final int SINK_TOP_RIGHT_X = 710;
     private static final int SINK_TOP_LEFT_X = 454;
     private static final int SINK_TOP_Y = 205;
+    private static final int MAX_DISHES = 11;
+    private static final int MIN_DISHES = 8;
     private Random rand;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -203,7 +205,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
         int min;
         int max;
-        int dishCount = 9;
+        int dishCount = rand.nextInt((MAX_DISHES - MIN_DISHES) + 1) + MIN_DISHES;
 
         float deltaY = 0;
 
@@ -248,7 +250,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
         Dish dish = aDish.copy();
         dish.setX(x);
-        dish.setY(y);
+        dish.startDropIn((int)y);
         for (int j = 0; j <= rand.nextInt(5); j++) {
             dirts.add(dish.addDirt(allDirt.get(rand.nextInt(allDirt.size))));
         }
@@ -278,6 +280,7 @@ public class DoTheDishes extends ApplicationAdapter {
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        newLevel();
 
         camera.update();
         batch.setProjectionMatrix(camera.combined);
@@ -286,12 +289,33 @@ public class DoTheDishes extends ApplicationAdapter {
 
         background.draw(batch);
 
-        cycleDishes();
+//        cycleDishes();
+        dropInDishes();
         drawer.drawInOrder(batch);
 
         batch.draw(counterFg, 416, 0);
         sponge.draw(batch);
         batch.end();
+    }
+
+    private void newLevel(){
+        for (Dish dish : dishes) {
+            if (!dish.isDrying() || dish.timeDrying() < 500) {
+                return;
+            }
+        }
+
+        dishes.clear();
+
+        initializeDishes();
+    }
+
+    private void dropInDishes(){
+        for (Dish dish : dishes) {
+            if (dish.isDroppingIn()) {
+                dish.dropIn((int)(Gdx.graphics.getDeltaTime() * 1000));
+            }
+        }
     }
 
     private void cycleDishes() {
