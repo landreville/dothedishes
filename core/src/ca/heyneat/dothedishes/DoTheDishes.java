@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Random;
 
@@ -32,8 +33,8 @@ public class DoTheDishes extends ApplicationAdapter {
     private static final int SINK_TOP_RIGHT_X = 710;
     private static final int SINK_TOP_LEFT_X = 454;
     private static final int SINK_TOP_Y = 205;
-    private static final int MAX_DISHES = 11;
-    private static final int MIN_DISHES = 8;
+    private static final int MAX_DISHES = 12;
+    private static final int MIN_DISHES = MAX_DISHES - 5;
     private Random rand;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -60,6 +61,8 @@ public class DoTheDishes extends ApplicationAdapter {
     private Dish coming;
 
     private Drawer drawer;
+
+    private long lastCleared;
 
     @Override
     public void create() {
@@ -289,7 +292,6 @@ public class DoTheDishes extends ApplicationAdapter {
 
         background.draw(batch);
 
-//        cycleDishes();
         dropInDishes();
         drawer.drawInOrder(batch);
 
@@ -300,14 +302,33 @@ public class DoTheDishes extends ApplicationAdapter {
 
     private void newLevel(){
         for (Dish dish : dishes) {
-            if (!dish.isDrying() || dish.timeDrying() < 500) {
+            if (!dish.isDrying() || dish.timeDrying() < 1000) {
                 return;
             }
         }
 
-        dishes.clear();
+        boolean done = clearDishes();
+        if(done) {
+            if(this.lastCleared == 0) {
+                this.lastCleared = TimeUtils.millis();
+            }
+            dishes.clear();
+            if(TimeUtils.timeSinceMillis(this.lastCleared) > 1000) {
+                this.lastCleared = 0;
+                initializeDishes();
+            }
+        }
+    }
 
-        initializeDishes();
+    private boolean clearDishes(){
+        boolean done = true;
+        for (Dish dish : dishes) {
+            if(dish.getY() < DoTheDishes.RES_HEIGHT){
+                done = false;
+            }
+            dish.flyOut((int)(Gdx.graphics.getDeltaTime() * 1000));
+        }
+        return done;
     }
 
     private void dropInDishes(){

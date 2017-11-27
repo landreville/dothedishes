@@ -149,19 +149,22 @@ public class Dish {
         return newDirt;
     }
 
-    public boolean dropIn(int delta){
+    public void dropIn(int delta){
         if(this.getY() - delta < this.dropToY){
             this.setY(this.dropToY);
             this.droppingIn = false;
-            return true;
         }else {
             this.moveY(-delta);
-            return false;
         }
     }
 
     public boolean isDroppingIn(){
         return this.droppingIn;
+    }
+
+    public boolean flyOut(int delta) {
+        this.moveY(delta);
+        return (this.getY() > DoTheDishes.RES_HEIGHT);
     }
 
     private void randomizeDirtPosition(Dirt dirt) {
