@@ -11,8 +11,8 @@ import java.util.Random;
 public class Dirt {
     private static final int MAX_SCRUBS = 15;
     private static final String TAG = "Dirt";
-    private Random rand;
-    private Sprite dirtSprite;
+    private final Random rand;
+    private final Sprite dirtSprite;
     private int verticalSwipes;
     private int horizontalSwipes;
     private boolean clean = false;
@@ -50,10 +50,6 @@ public class Dirt {
 
     public boolean isClean() {
         return this.clean;
-    }
-
-    public void setAlpha(float alpha) {
-        this.dirtSprite.setAlpha(alpha);
     }
 
     public void setRotation(float degrees) {

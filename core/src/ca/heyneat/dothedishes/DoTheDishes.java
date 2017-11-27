@@ -60,9 +60,6 @@ public class DoTheDishes extends ApplicationAdapter {
     private Array<Dish> allDish;
     private Array<Texture> allDirt;
 
-    private Dish leaving;
-    private Dish coming;
-
     private Drawer drawer;
 
     private long finishedDuration;
@@ -91,7 +88,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
         InputMultiplexer inputProcessor = new InputMultiplexer();
         inputProcessor.addProcessor(new SpongeInputProcessor(camera, sponge, dirts, scrubSounds));
-        inputProcessor.addProcessor(new DishInputProcessor(camera, dishes, drawer));
+        inputProcessor.addProcessor(new DishInputProcessor(camera, drawer));
 
         Gdx.input.setInputProcessor(inputProcessor);
         Gdx.app.setLogLevel(Application.LOG_NONE);
@@ -210,13 +207,6 @@ public class DoTheDishes extends ApplicationAdapter {
     }
 
     private void initializeDishes() {
-        float width;
-        float height;
-        float x;
-        float y;
-
-        int min;
-        int max;
         this.startAt = 0;
         int dishCount = rand.nextInt((MAX_DISHES - MIN_DISHES) + 1) + MIN_DISHES;
 
@@ -369,12 +359,12 @@ public class DoTheDishes extends ApplicationAdapter {
         }
     }
 
-    public void drawFinishedDuration(SpriteBatch batch) {
+    private void drawFinishedDuration(SpriteBatch batch) {
         if (this.finishedDuration == 0) {
             return;
         }
         int minutes = (int) Math.floor(this.finishedDuration / 1000 / 60);
-        int seconds = (int) Math.round(this.finishedDuration / 1000 % 60);
+        int seconds = Math.round(this.finishedDuration / 1000 % 60);
         this.finishedTimeFont.draw(batch, String.format("%d:%02d", minutes, seconds), 698, 368);
     }
 

@@ -12,10 +12,10 @@ import java.util.Random;
 
 public class Dish {
     private final static String TAG = "Dish";
-    private Random rand;
-    private Sprite dishSprite;
-    private Array<Dirt> dirts;
-    private Rectangle dirtArea;
+    private final Random rand;
+    private final Sprite dishSprite;
+    private final Array<Dirt> dirts;
+    private final Rectangle dirtArea;
     private boolean drying = false;
     private long dryingStart;
     private boolean droppingIn = false;
@@ -74,7 +74,7 @@ public class Dish {
         return this.dishSprite.getY();
     }
 
-    public void setY(float y) {
+    private void setY(float y) {
         float diff = y - this.getY();
         this.dishSprite.setY(y);
         this.moveDirtXY(0, diff);
@@ -161,9 +161,8 @@ public class Dish {
         return this.droppingIn;
     }
 
-    public boolean flyOut(int delta) {
+    public void flyOut(int delta) {
         this.moveY(delta);
-        return (this.getY() > DoTheDishes.RES_HEIGHT);
     }
 
     private void randomizeDirtPosition(Dirt dirt) {

@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-public class Drawer {
+class Drawer {
     private final static String TAG = "Drawer";
     private Dish lastTouched;
-    private Array<Dish> dishes;
-    private Array<Rectangle> wires;
-    private Sprite wire;
+    private final Array<Dish> dishes;
+    private final Array<Rectangle> wires;
+    private final Sprite wire;
 
     public Drawer(Array<Dish> dishes, Array<Rectangle> wires, Sprite wire) {
         this.dishes = dishes;

@@ -10,20 +10,17 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
-public class SpongeInputProcessor implements InputProcessor {
-    private Random rand;
-    private OrthographicCamera camera;
-    private Sprite sponge;
-    private Array<Dirt> dirts;
+class SpongeInputProcessor implements InputProcessor {
+    private final Random rand;
+    private final OrthographicCamera camera;
+    private final Sprite sponge;
+    private final Array<Dirt> dirts;
     private boolean spongeActive = false;
-    private float spongeHalfWidth;
-    private float spongeHalfHeight;
+    private final float spongeHalfWidth;
+    private final float spongeHalfHeight;
     private Dirt activeDirt;
     private Vector3 dirtEntry;
-    private Array<Sound> scrubSounds;
-    private float lastX;
-    private float lastY;
-
+    private final Array<Sound> scrubSounds;
 
     public SpongeInputProcessor(
             OrthographicCamera camera,

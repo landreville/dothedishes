@@ -4,20 +4,17 @@ package ca.heyneat.dothedishes;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 
-public class DishInputProcessor implements InputProcessor {
+class DishInputProcessor implements InputProcessor {
     private static final String TAG = "DishInputProcessor";
-    private Array<Dish> dishes;
     private Dish currentDish;
     private int lastX;
     private int lastY;
-    private OrthographicCamera camera;
-    private Drawer drawer;
+    private final OrthographicCamera camera;
+    private final Drawer drawer;
 
-    public DishInputProcessor(OrthographicCamera camera, Array<Dish> dishes, Drawer drawer) {
+    public DishInputProcessor(OrthographicCamera camera, Drawer drawer) {
         this.camera = camera;
-        this.dishes = dishes;
         this.currentDish = null;
         this.drawer = drawer;
     }
