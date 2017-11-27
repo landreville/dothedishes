@@ -119,7 +119,7 @@ public class SpongeInputProcessor implements InputProcessor {
             // Starting swipe
             this.activeDirt = dirt;
             this.dirtEntry = vector;
-            this.scrubSounds.get(rand.nextInt(this.scrubSounds.size-1)).play();
+            this.scrubSounds.get(rand.nextInt(this.scrubSounds.size - 1)).play();
         }
     }
 

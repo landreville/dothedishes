@@ -61,23 +61,23 @@ public class Drawer {
         }
     }
 
-    public Dish getTopTouchedDish(int x, int y){
+    public Dish getTopTouchedDish(int x, int y) {
         Dish dish = null;
         if (lastTouched != null && dishContains(lastTouched, x, y)) {
             return lastTouched;
         }
 
         // Dirty dishes are on top
-        for(int i=dishes.size-1; i>=0; i--){
+        for (int i = dishes.size - 1; i >= 0; i--) {
             dish = dishes.get(i);
             if ((!dish.isDrying() || !dish.isClean()) && dishContains(dish, x, y)) {
                 return dish;
             }
         }
 
-        for(int i=dishes.size-1; i>=0; i--){
+        for (int i = dishes.size - 1; i >= 0; i--) {
             dish = dishes.get(i);
-            if(dishContains(dish, x, y)){
+            if (dishContains(dish, x, y)) {
                 return dish;
             }
         }
@@ -85,7 +85,7 @@ public class Drawer {
         return dish;
     }
 
-    private boolean dishContains(Dish dish, int x, int y){
+    private boolean dishContains(Dish dish, int x, int y) {
         Rectangle dishRect = dish.getBoundingRectangle();
         return dishRect.contains(x, y);
     }

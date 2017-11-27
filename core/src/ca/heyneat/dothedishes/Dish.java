@@ -1,7 +1,6 @@
 package ca.heyneat.dothedishes;
 
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -43,7 +42,7 @@ public class Dish {
         }
     }
 
-    public void startDropIn(int dropToY){
+    public void startDropIn(int dropToY) {
         this.setY(DoTheDishes.RES_HEIGHT + rand.nextInt(150));
         this.droppingIn = true;
         this.dropToY = dropToY;
@@ -149,16 +148,16 @@ public class Dish {
         return newDirt;
     }
 
-    public void dropIn(int delta){
-        if(this.getY() - delta < this.dropToY){
+    public void dropIn(int delta) {
+        if (this.getY() - delta < this.dropToY) {
             this.setY(this.dropToY);
             this.droppingIn = false;
-        }else {
+        } else {
             this.moveY(-delta);
         }
     }
 
-    public boolean isDroppingIn(){
+    public boolean isDroppingIn() {
         return this.droppingIn;
     }
 

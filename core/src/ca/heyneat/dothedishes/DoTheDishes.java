@@ -6,9 +6,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -44,6 +46,7 @@ public class DoTheDishes extends ApplicationAdapter {
     private Sprite sponge1;
     private Sprite sponge2;
     private Sprite sponge;
+    private BitmapFont finishedTimeFont;
 
     private Sprite background;
     private Sprite counterFg;
@@ -62,7 +65,10 @@ public class DoTheDishes extends ApplicationAdapter {
 
     private Drawer drawer;
 
+    private long finishedDuration;
     private long lastCleared;
+    private long startAt;
+    private boolean clearingDishes;
 
     @Override
     public void create() {
@@ -118,6 +124,9 @@ public class DoTheDishes extends ApplicationAdapter {
         background = new Sprite(new Texture(Gdx.files.internal("background-800x480.png")));
         counterFg = new Sprite(new Texture(Gdx.files.internal("counter-fg-321x115.png")));
         rackWire = new Sprite(new Texture(Gdx.files.internal("rack-wire-227x35.png")));
+
+        this.finishedTimeFont = new BitmapFont();
+        this.finishedTimeFont.setColor(new Color(0.75f, 0.75f, 0.75f, 1f));
     }
 
     private void loadDishes() {
@@ -208,6 +217,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
         int min;
         int max;
+        this.startAt = 0;
         int dishCount = rand.nextInt((MAX_DISHES - MIN_DISHES) + 1) + MIN_DISHES;
 
         float deltaY = 0;
@@ -253,7 +263,7 @@ public class DoTheDishes extends ApplicationAdapter {
 
         Dish dish = aDish.copy();
         dish.setX(x);
-        dish.startDropIn((int)y);
+        dish.startDropIn((int) y);
         for (int j = 0; j <= rand.nextInt(5); j++) {
             dirts.add(dish.addDirt(allDirt.get(rand.nextInt(allDirt.size))));
         }
@@ -296,47 +306,76 @@ public class DoTheDishes extends ApplicationAdapter {
         drawer.drawInOrder(batch);
 
         batch.draw(counterFg, 416, 0);
+        drawFinishedDuration(batch);
         sponge.draw(batch);
         batch.end();
     }
 
-    private void newLevel(){
+    private void newLevel() {
         for (Dish dish : dishes) {
             if (!dish.isDrying() || dish.timeDrying() < 1000) {
                 return;
             }
         }
+        if (!this.clearingDishes) {
+            // Subtract 1 second to account for wait time above.
+            this.finishedDuration = TimeUtils.timeSinceMillis(this.startAt) - 1000;
+        }
 
         boolean done = clearDishes();
-        if(done) {
-            if(this.lastCleared == 0) {
+
+        if (done) {
+            if (this.lastCleared == 0) {
                 this.lastCleared = TimeUtils.millis();
             }
-            dishes.clear();
-            if(TimeUtils.timeSinceMillis(this.lastCleared) > 1000) {
+
+            if (TimeUtils.timeSinceMillis(this.lastCleared) > 1000) {
                 this.lastCleared = 0;
                 initializeDishes();
+                this.clearingDishes = false;
             }
         }
     }
 
-    private boolean clearDishes(){
+    private boolean clearDishes() {
+        this.clearingDishes = true;
         boolean done = true;
         for (Dish dish : dishes) {
-            if(dish.getY() < DoTheDishes.RES_HEIGHT){
+            if (dish.getY() < DoTheDishes.RES_HEIGHT) {
                 done = false;
             }
-            dish.flyOut((int)(Gdx.graphics.getDeltaTime() * 1000));
+            dish.flyOut((int) (Gdx.graphics.getDeltaTime() * 1000));
+        }
+        if (done) {
+            dishes.clear();
         }
         return done;
     }
 
-    private void dropInDishes(){
+    private void dropInDishes() {
+        if (this.startAt != 0) {
+            return;
+        }
+
+        boolean done = true;
         for (Dish dish : dishes) {
             if (dish.isDroppingIn()) {
-                dish.dropIn((int)(Gdx.graphics.getDeltaTime() * 1000));
+                dish.dropIn((int) (Gdx.graphics.getDeltaTime() * 1000));
+                done = false;
             }
         }
+        if (done) {
+            this.startAt = TimeUtils.millis();
+        }
+    }
+
+    public void drawFinishedDuration(SpriteBatch batch) {
+        if (this.finishedDuration == 0) {
+            return;
+        }
+        int minutes = (int) Math.floor(this.finishedDuration / 1000 / 60);
+        int seconds = (int) Math.round(this.finishedDuration / 1000 % 60);
+        this.finishedTimeFont.draw(batch, String.format("%d:%02d", minutes, seconds), 698, 368);
     }
 
     @Override
@@ -354,7 +393,7 @@ public class DoTheDishes extends ApplicationAdapter {
         counterFg.getTexture().dispose();
         rackWire.getTexture().dispose();
         backgroundSound.dispose();
-        for(Sound sound: scrubSounds) {
+        for (Sound sound : scrubSounds) {
             sound.dispose();
         }
     }
