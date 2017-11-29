@@ -10,15 +10,25 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Random;
 
+/**
+ * Represents a dish and all of the dirt on it.
+ *
+ * This is also a wrapper class for the dish sprite.
+ */
 public class Dish {
     private final static String TAG = "Dish";
     private final Random rand;
     private final Sprite dishSprite;
     private final Array<Dirt> dirts;
+    // Area of this dish to place dirt in.
     private final Rectangle dirtArea;
+    // Dish is currently drying
     private boolean drying = false;
+    // Time when the dish was put in the drying rack
     private long dryingStart;
+    // Dish is dropping into the sink
     private boolean droppingIn = false;
+    // Final Y position for the dish dropping in
     private int dropToY;
 
     public Dish(Sprite dishSprite, Rectangle dirtArea) {
@@ -28,6 +38,10 @@ public class Dish {
         this.rand = new Random();
     }
 
+    /**
+     * Instantiate a new dish based on this one. Use the same texture.
+     * @return A new Dish instance.
+     */
     public Dish copy() {
         return new Dish(
                 new Sprite(dishSprite.getTexture()),
@@ -35,6 +49,10 @@ public class Dish {
         );
     }
 
+    /**
+     * Render the dish and the dirt on this dish.
+     * @param batch SpriteBatch to draw the sprites with.
+     */
     public void draw(SpriteBatch batch) {
         this.dishSprite.draw(batch);
         for (int i = 0; i < dirts.size; i++) {
@@ -42,12 +60,19 @@ public class Dish {
         }
     }
 
+    /**
+     * Start dropping the dish from above the screen to the given y position.
+     * @param dropToY Y position at which to stop moving the plate down.
+     */
     public void startDropIn(int dropToY) {
+        // Place the dish above the screen a random amount so it looks like the dishes
+        // dropped at different times.
         this.setY(DoTheDishes.RES_HEIGHT + rand.nextInt(150));
         this.droppingIn = true;
         this.dropToY = dropToY;
     }
 
+    // Wrapper methods for Sprite
     public Rectangle getBoundingRectangle() {
         return this.dishSprite.getBoundingRectangle();
     }
@@ -64,23 +89,39 @@ public class Dish {
         return this.dishSprite.getX();
     }
 
+    /**
+     * Wrapper method for sprite. Also sets the X position for all dirt on this dish.
+     * @param x
+     */
     public void setX(float x) {
         float diff = x - this.getX();
         this.dishSprite.setX(x);
         this.moveDirtXY(diff, 0);
     }
 
+
     public float getY() {
         return this.dishSprite.getY();
     }
 
+    /**
+     * Wrapper method for sprite. Also sets the Y position for all dirt on this dish.
+     * @param y
+     */
     private void setY(float y) {
         float diff = y - this.getY();
         this.dishSprite.setY(y);
         this.moveDirtXY(0, diff);
     }
 
+    /**
+     *
+     * @return True if this dish has no more dirt on it.
+     */
     public boolean isClean() {
+        // Loop over the dir to check if each is clean.
+        // This could definitely be improved by saving the clean status when dirt is cleaned
+        // instead of looping over all the dirt all the time.
         for (int i = 0; i < dirts.size; i++) {
             if (!dirts.get(i).isClean()) {
                 return false;
@@ -89,15 +130,27 @@ public class Dish {
         return true;
     }
 
+    /**
+     *
+     * @return True if the dish is drying.
+     */
     public boolean isDrying() {
         return drying;
     }
 
+    /**
+     * Set whether the dish is drying or not.
+     * @param drying True if the dish is drying.
+     */
     public void setDrying(boolean drying) {
         this.drying = drying;
         this.dryingStart = TimeUtils.millis();
     }
 
+    /**
+     * How long has the dish been drying.
+     * @return Time since setDrying(True) was called in milliseconds.
+     */
     public long timeDrying() {
         if (this.dryingStart == 0) {
             return 0;
@@ -105,8 +158,11 @@ public class Dish {
         return TimeUtils.timeSinceMillis(this.dryingStart);
     }
 
+    /**
+     * Move the dish X position by the number provide.
+     * @param x Delta to change x.
+     */
     public void moveX(int x) {
-
         if (this.getY() < DoTheDishes.SINK_BOTTOM_Y &&
                 this.getX() >= DoTheDishes.SINK_BOTTOM_LEFT_X &&
                 this.getX() + x <= DoTheDishes.SINK_BOTTOM_LEFT_X) {
@@ -122,6 +178,10 @@ public class Dish {
         this.setX(this.getX() + x);
     }
 
+    /**
+     * Move the dish Y position by the number provide.
+     * @param y Delta to change y.
+     */
     public void moveY(int y) {
 
         if (this.getY() + y < DoTheDishes.SINK_BOTTOM_Y &&
@@ -137,10 +197,19 @@ public class Dish {
         this.setY(this.getY() + y);
     }
 
+    /**
+     * Dispose the texture for this dish.
+     */
     public void dispose() {
         this.dishSprite.getTexture().dispose();
     }
 
+    /**
+     * Add a new dirt using the provided texture. Place it randomly on the dish.
+     *
+     * @param dirt Texture to use for the dish.
+     * @return A new Dirt instance.
+     */
     public Dirt addDirt(Texture dirt) {
         Dirt newDirt = new Dirt(new Sprite(dirt));
         randomizeDirtPosition(newDirt);
@@ -148,6 +217,11 @@ public class Dish {
         return newDirt;
     }
 
+    /**
+     * Move the dish down by the delta amount until it gets to the Y position to drop to.
+     *
+     * @param delta Amount to move the dish down by.
+     */
     public void dropIn(int delta) {
         if (this.getY() - delta < this.dropToY) {
             this.setY(this.dropToY);
@@ -157,24 +231,42 @@ public class Dish {
         }
     }
 
+    /**
+     * @return True if Dish is still dropping from the sky.
+     */
     public boolean isDroppingIn() {
         return this.droppingIn;
     }
 
+    /**
+     * Move the dish up by the delta amount.
+     *
+     * @param delta Amount to move the dish up.
+     */
     public void flyOut(int delta) {
         this.moveY(delta);
     }
 
+    /**
+     * Randomize the position of the given dirt on this dish. The dirt will also
+     * be scaled if it can't fit in dish's dirt area.
+     *
+     * @param dirt Dirt instance to position.
+     */
     private void randomizeDirtPosition(Dirt dirt) {
         float scale = 1;
         float yscale = 1;
 
+
         if (this.dirtArea.getWidth() < dirt.getWidth()) {
+            // Dish is too wide to fit in dirt area
             scale = dirtArea.getWidth() / dirt.getWidth();
         }
         if (this.dirtArea.getHeight() < dirt.getHeight()) {
+            // Dish is too tall to fit in dirt area
             yscale = dirtArea.getHeight() / dirt.getHeight();
         }
+        // Use the smallest scaling out of the height and width
         if (yscale < scale) {
             scale = yscale;
         }
@@ -191,13 +283,17 @@ public class Dish {
 
 
         if (ymin >= ymax) {
+            // Dirt just barely fits on dish (probably scaled to fit exactly)
             y = ymin;
         } else {
+            // Randomize the Y position
             y = this.rand.nextInt((ymax - ymin) + 1) + ymin;
         }
         if (xmin >= xmax) {
+            // Dirt just barely fits on dish (probably scaled to fit exactly)
             x = xmin;
         } else {
+            // Randomize X position
             x = this.rand.nextInt((xmax - xmin) + 1) + xmin;
         }
 
@@ -205,9 +301,16 @@ public class Dish {
         dirt.setScale(scale);
         dirt.setX(x);
         dirt.setY(y);
+        // Randomly rotate between -15 and 15 degrees
         dirt.setRotation(rand.nextInt(15) * (rand.nextBoolean() ? 1 : -1));
     }
 
+    /**
+     * Move all the dirt attached to this dish.
+     *
+     * @param x Delta amount to move X position.
+     * @param y Delta amount to move Y position.
+     */
     private void moveDirtXY(float x, float y) {
         for (Dirt dirt : dirts) {
             dirt.setX(dirt.getX() + x);

@@ -16,7 +16,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 public class AndroidLauncher extends AndroidApplication {
-    private static final String AD_UNIT_ID = "ca-app-pub-3577738217405107/1958169537";
+    private static final String AD_UNIT_ID = "";
     protected AdView adView;
     protected View gameView;
     private boolean enableAds = false;
@@ -30,8 +30,10 @@ public class AndroidLauncher extends AndroidApplication {
         cfg.useCompass = false;
 
         if(enableAds){
+            // Create a layout with two views, one for libgdx game and one for the ad.
             createWithAds(cfg);
         }else {
+            // Just start the damn game.
             initialize(new DoTheDishes(), cfg);
         }
     }
