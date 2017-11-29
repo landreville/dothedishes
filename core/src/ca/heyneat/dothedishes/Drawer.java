@@ -79,7 +79,7 @@ class Drawer {
      * Return the top-most dish that overlaps the given x, y location.
      */
     public Dish getTopTouchedDish(int x, int y) {
-        Dish dish = null;
+        Dish dish;
         // It's probably the last touched dish.
         if (lastTouched != null && dishContains(lastTouched, x, y)) {
             return lastTouched;
@@ -101,7 +101,7 @@ class Drawer {
             }
         }
 
-        return dish;
+        return null;
     }
 
     /**
