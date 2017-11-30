@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class Dirt {
     // Maximum number of scrubs to take to clean dirt
-    private static final int MAX_SCRUBS = 15;
+    private static final int MAX_SCRUBS = 10;
     private static final String TAG = "Dirt";
     private final Random rand;
     private final Sprite dirtSprite;
@@ -61,14 +61,14 @@ public class Dirt {
 
         // If the horizontal and vertical swipe requirements have hit zero then
         // the dirt is cleaned.
-        // If the swipes in either direction is the maximum number of swipes (plus the original
-        // requirement) then it's considered clean. To prevent people from being
+        // If the swipes in either direction is 5 more than required
+        // then it's considered clean. To prevent people from being
         // frustrated by making swipes in only one direction.
         if (
             (verticalSwipes <= 0 &&
-                (horizontalSwipes <= 0 || verticalSwipes <= -1 * MAX_SCRUBS)) ||
+                (horizontalSwipes <= 0 || verticalSwipes <= -5)) ||
             (horizontalSwipes <= 0 &&
-                 (verticalSwipes <= 0 || horizontalSwipes <= -1 * MAX_SCRUBS))
+                 (verticalSwipes <= 0 || horizontalSwipes <= -5))
         ) {
             this.clean = true;
             this.dirtSprite.setAlpha(0);
